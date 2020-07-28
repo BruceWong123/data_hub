@@ -40,11 +40,7 @@
   <!-- /.login-logo -->
   <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">
-        {% if msg %} {{ msg | safe }} {% else %} Default credentials:
-        <strong>test / ApS12_ZZs8</strong>
-        {% endif %}
-      </p>
+      <p class="login-box-msg"></p>
 
       <form method="post" action="">
         {% csrf_token %}
@@ -89,6 +85,13 @@
       </form>
 
       <br /><br />
+
+      <div class="text-center">
+        Not a member?
+        <a href="{% url 'register' %}" class="text-center">Register</a>
+        <br />
+        <br />
+      </div>
     </div>
     <!-- /.login-card-body -->
   </div>
