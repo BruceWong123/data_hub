@@ -17,26 +17,27 @@ PASSWORD = "deeproute"
 # connect to MySQL server
 db_connection = mysql.connect(
     host=HOST, database=DATABASE, user=USER, password=PASSWORD)
-print("Connected to:", db_connection.get_server_info())
+print("Successfully Connected to remote MySQL :",
+      db_connection.get_server_info())
 # enter your code here!
 
 
-username = urllib.parse.quote_plus('deep')
-password = urllib.parse.quote_plus('route')
+# username = urllib.parse.quote_plus('deep')
+# password = urllib.parse.quote_plus('route')
 
-myclient = MongoClient(
-    'mongodb://%s:%s@34.218.26.149/datahub' % (username, password))
-mydb = myclient["datahub"]
-collist = mydb.list_collection_names()
-if "messages" in collist:
-    print("The collection exists.")
+# myclient = MongoClient(
+#     'mongodb://%s:%s@34.218.26.149/datahub' % (username, password))
+# mydb = myclient["datahub"]
+# collist = mydb.list_collection_names()
+# if "messages" in collist:
+#     print("The collection exists.")
 
-mycol = mydb["messages"]
-timestamp_test = 1583635929485759997
-testitem = {"topic": "/test2", "timestamp": timestamp_test}
-mycol.insert_one(testitem)
-result = mycol.find({"topic": {"$regex": "^/t"}})
+# mycol = mydb["messages"]
+# timestamp_test = 1583635929485759997
+# testitem = {"topic": "/test2", "timestamp": timestamp_test}
+# mycol.insert_one(testitem)
+# result = mycol.find({"topic": {"$regex": "^/t"}})
 
-for x in result:
-    print("result: ", x.get('topic'), " timestamp: ",
-          x.get('timestamp'), " id: ", x.get('_id'))
+# for x in result:
+#     print("result: ", x.get('topic'), " timestamp: ",
+#           x.get('timestamp'), " id: ", x.get('_id'))

@@ -11,6 +11,7 @@ urlpatterns = [
     # The home page
     path('', views.index, name='home'),
 
+    path('uploadFile', views.uploadFile, name="upload"),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 
