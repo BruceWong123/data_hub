@@ -28,7 +28,7 @@ class RosbagParser(object):
 
         with rosbag.Bag(self.bag) as bag:
             for topic, msg, t in bag.read_messages():
-                data = {"bagid": "highway_2", "timestamp": str(
+                data = {"bagid": "us_bag_3", "timestamp": str(
                     t), "topic": str(topic), "message": str(msg)}
                 data_list.append(data)
                 print("insert one row")
@@ -52,7 +52,7 @@ class RosbagParser(object):
 
 
 if __name__ == "__main__":
-    bag_path = '/home/bruce/bags/highway_2.bag'
+    bag_path = '/home/bruce/bags/bag3.bag'
     rp = RosbagParser(bag_path)
     rp.connect_to_db()
     rp.insert_frame_data_to_db()
