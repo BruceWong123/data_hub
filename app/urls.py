@@ -9,24 +9,20 @@ from django.conf.urls import url
 
 urlpatterns = [
 
-    # The home page
-    path('', views.index, name='home'),
+    path('', views.views.index, name='home'),
+    url('uploadFile', views.views.uploadFile),
 
-    url('uploadFile', views.uploadFile),
-    #path('test', views.uploadFile),
-    # Matches any html file
-    #re_path(r'^.*\.*', views.pages, name='pages'),
-
-
-    url(r'^api/bags/$', views.getAllBags),
-    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$', views.getBagByID),
+    url(r'^api/bags/$', views.api.getAllBags),
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$', views.api.getBagByID),
 
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/$',
-        views.getBagByIdTime),
+        views.api.getBagByIdTime),
 
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
-        views.getBagByIdTimeTopic),
+        views.api.getBagByIdTimeTopic),
 
-    url(r'^api/bags/(?P<city>[a-zA-Z]+)$', views.getBagByCity),
-    #url(r'^.*\.*', views.pages, name='pages'),
+    url(r'^api/citys/(?P<city>[a-zA-Z]+)/$', views.api.getBagByCity),
+
+
+    url(r'^(?!/api).*$', views.views.pages, name='pages'),
 ]

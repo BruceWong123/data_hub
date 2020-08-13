@@ -9,8 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Bag
-from .serializers import *
+from ..models import Bag
+from ..serializers import *
 
 from pymongo import MongoClient
 import urllib.parse
@@ -23,44 +23,6 @@ mongo_client = MongoClient(
     'mongodb://%s:%s@34.218.26.149/datahub' % (username, password))
 mongo_db = mongo_client["datahub"]
 mongo_col = mongo_db["messages"]
-
-
-@login_required(login_url="/login/")
-def index(request):
-    return render(request, "index2.html")
-
-
-@login_required(login_url="/login/")
-def pages(request):
-    context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
-    try:
-
-        load_template = request.path.split('/')[-1]
-        html_template = loader.get_template(load_template)
-        return HttpResponse(html_template.render(context, request))
-
-    except template.TemplateDoesNotExist:
-
-        html_template = loader.get_template('page-404.html')
-        return HttpResponse(html_template.render(context, request))
-
-    except:
-
-        html_template = loader.get_template('page-500.html')
-        return HttpResponse(html_template.render(context, request))
-
-
-def uploadFile(request):
-    if 'inputDescription' in request.POST:
-        mapname = request.POST['inputDescription']
-        if not mapname:
-            return HttpResponse("missing value for map name")
-        else:
-            return HttpResponse("%s" % mapname)
-    else:
-        return HttpResponse("missing map name")
 
 
 @api_view(['GET', 'POST'])
@@ -96,7 +58,7 @@ def getAllBags(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@ api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def getBagByID(request, bagid):
     context = {}
     try:
@@ -214,15 +176,17 @@ def getBagByIdTimeTopic(request, bagid, time, topic):
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getBagByCity(request, city):
     try:
-        bag = Bag.objects.get(city=city)
+        bag = Bag.objects.filter(city=city)
+        return HttpResponse("found city by %s" % city)
     except Bag.DoesNotExist:
         # html_template = loader.get_template('page-404.html')
         return HttpResponse("can't find city by %s" % city)
 
     if request.method == 'GET':
-        serializer = BagSerializer(bag, context={'request': request})
-        return HttpResponse("return data for bag:  %s" % serializer.data)
+        # serializer = BagSerializer(bag, context={'request': request})
+        # return HttpResponse("return data for bag:  %s" % serializer.data)
         # return Response(serializer.data)
+        return HttpResponse("can't find city by %s" % city)
 
     elif request.method == 'PUT':
         serializer = BagSerializer(

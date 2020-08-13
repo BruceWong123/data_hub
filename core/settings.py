@@ -77,6 +77,11 @@ DATABASES = {
         'OPTIONS': {
             'read_default_file': '/etc/mysql/my.cnf',
         },
+        'NAME': 'data_hub',
+        'USER': 'deeproute',
+        'PASSWORD': 'deeproute',
+        'HOST': '34.218.26.149',
+        'PORT': '3306',
     }
 }
 

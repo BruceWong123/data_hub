@@ -20,7 +20,7 @@ class Bag(models.Model):
     status = models.CharField(max_length=20)
     start = models.CharField(max_length=30, default='0')
     end = models.CharField(max_length=30, default='0')
-    bagid = models.CharField(max_length=30, default="   ")
+    bagid = models.CharField(max_length=30, default="   ", unique=True)
 
     def __str__(self):
         return self.first_name
