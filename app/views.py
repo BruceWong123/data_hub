@@ -12,6 +12,20 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Bag
 from .serializers import *
 
+from pymongo import MongoClient
+import urllib.parse
+import time
+
+username = urllib.parse.quote_plus('deep')
+password = urllib.parse.quote_plus('route')
+
+myclient = MongoClient(
+    'mongodb://%s:%s@34.218.26.149/datahub' % (username, password))
+mydb = myclient["datahub"]
+collist = mydb.list_collection_names()
+if "messages" in collist:
+    print("The collection exists.")
+
 
 @login_required(login_url="/login/")
 def index(request):
@@ -85,22 +99,31 @@ def getAllBags(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def getBagByIDAndTimestamp(request, pk, time):
+def getBagByIDAndTimestamp(request, bagid, time):
     context = {}
     try:
-        bag = Bag.objects.get(pk=pk)
-        time = int(time)
+        bag = Bag.objects.get(bagid=bagid)
+        stime = int(time)
         start = int(bag.start)
         end = int(bag.end)
-        if time < start or time > end:
-            return HttpResponse("time stamp is out of range with range start from %s " % time)
+        if stime < start or stime > end:
+            return HttpResponse("time stamp is out of range with range start from %s " % stime)
     except Bag.DoesNotExist:
         return HttpResponse("can't find by id: %s" % pk)
 
     if request.method == 'GET':
         serializer = BagSerializer(bag, context={'request': request})
-        return HttpResponse("return data for bag with timestamp:  %s" % serializer.data)
+
         # return Response(serializer.data)
+
+        mycol = mydb["messages"]
+        #result = mycol.find({"topic": {"$regex": "^/p"}}).limit(1)
+        result = mycol.find({"timestamp": {"$lte": time}}).limit(3)
+        resultstr = result.count()
+        for x in result:
+            resultstr = x["topic"] + ":" + x["message"]
+
+        return HttpResponse("return data for bag with timestamp %s" % resultstr)
 
     elif request.method == 'PUT':
         serializer = BagSerializer(
@@ -108,21 +131,23 @@ def getBagByIDAndTimestamp(request, pk, time):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponse("put in get bag by id and time stamp")
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         bag.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return HttpResponse("delete in get bag by id and time stamp")
+        # return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def getBagByID(request, pk):
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getBagByID(request, bagid):
     context = {}
     try:
-        bag = Bag.objects.get(pk=pk)
+        bag = Bag.objects.get(bagid=bagid)
     except Bag.DoesNotExist:
-        #html_template = loader.get_template('page-404.html')
-        return HttpResponse("can't find by id: %s" % pk)
+        # html_template = loader.get_template('page-404.html')
+        return HttpResponse("can't find by id: %s" % bagid)
 
     if request.method == 'GET':
         serializer = BagSerializer(bag, context={'request': request})
@@ -142,13 +167,13 @@ def getBagByID(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def getBagByCity(request, city):
     context = {}
     try:
         bag = Bag.objects.get(city=city)
     except Bag.DoesNotExist:
-        #html_template = loader.get_template('page-404.html')
+        # html_template = loader.get_template('page-404.html')
         return HttpResponse("can't find city by %s" % city)
 
     if request.method == 'GET':

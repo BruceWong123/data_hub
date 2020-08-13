@@ -3,12 +3,6 @@
 from django.db import migrations
 
 
-def create_data(apps, schema_editor):
-    Bag = apps.get_model('app', 'Bag')
-    Bag(country="China", city="Shenzhen", location="ces small", uploader="Yajun Wang",
-        vehicle="MKZ001", description="bag 001 description", status="pending", start='0', end='10000').save()
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -16,5 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_data),
     ]
