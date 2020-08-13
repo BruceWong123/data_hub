@@ -23,5 +23,8 @@ urlpatterns = [
 
     url(r'^api/bags/(?P<pk>[0-9]+)/(?P<time>[0-9]+)/$',
         views.getBagByIDAndTimestamp),
+
     url(r'^api/bags/(?P<city>[a-zA-Z]+)$', views.getBagByCity),
+
+    re_path(r'^.*\.*', views.pages, name='pages'),
 ]
