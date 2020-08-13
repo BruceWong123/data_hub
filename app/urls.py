@@ -22,7 +22,10 @@ urlpatterns = [
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)$', views.getBagByID),
 
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/$',
-        views.getBagByIDAndTimestamp),
+        views.getBagByIdTime),
+
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
+        views.getBagByIdTimeTopic),
 
     url(r'^api/bags/(?P<city>[a-zA-Z]+)$', views.getBagByCity),
 
