@@ -19,12 +19,12 @@ urlpatterns = [
 
 
     url(r'^api/bags/$', views.getAllBags),
-    url(r'^api/bags/(?P<pk>[0-9]+)$', views.getBagByID),
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)$', views.getBagByID),
 
-    url(r'^api/bags/(?P<pk>[0-9]+)/(?P<time>[0-9]+)/$',
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/$',
         views.getBagByIDAndTimestamp),
 
     url(r'^api/bags/(?P<city>[a-zA-Z]+)$', views.getBagByCity),
 
-    re_path(r'^.*\.*', views.pages, name='pages'),
+    #url(r'^.*\.*', views.pages, name='pages'),
 ]

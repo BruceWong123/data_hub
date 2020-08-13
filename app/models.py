@@ -18,8 +18,9 @@ class Bag(models.Model):
     description = models.TextField(blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20)
-    start = models.CharField(max_length=20, default='0')
-    end = models.CharField(max_length=20, default='0')
+    start = models.CharField(max_length=30, default='0')
+    end = models.CharField(max_length=30, default='0')
+    bagid = models.CharField(max_length=30, default="   ")
 
     def __str__(self):
         return self.first_name

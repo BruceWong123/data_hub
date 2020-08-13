@@ -7,4 +7,4 @@ class BagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bag
         fields = ('pk', 'country', 'city', 'location',
-                  'uploader', 'vehicle', 'date', 'description', 'start', 'end')
+                  'uploader', 'vehicle', 'date', 'description', 'start', 'end', 'bagid')

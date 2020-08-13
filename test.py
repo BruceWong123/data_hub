@@ -1,5 +1,4 @@
-#!/usr/bin/python2
-# -*- coding: utf-8 -*-
+
 
 import os
 import json
@@ -26,12 +25,13 @@ class RosbagParser(object):
         col = self.mydb["messages"]
         start_time_s = time.time()
         data_list = []
+
         with rosbag.Bag(self.bag) as bag:
-            for topic, msg, t in bag.read_messages(topics=self.topic_list):
-                data = {"bagid": self.bag, "timestamp": str(
-                    t), "topic": "ddd", "message": str(222)}
+            for topic, msg, t in bag.read_messages():
+                data = {"bagid": "highway_2", "timestamp": str(
+                    t), "topic": str(topic), "message": str(msg)}
                 data_list.append(data)
-                break
+                print("insert one row")
         col.insert_many(data_list)
         print (len(data_list))
         end_time_s = time.time()
@@ -52,8 +52,8 @@ class RosbagParser(object):
 
 
 if __name__ == "__main__":
-    bag_path = '/home/proz023/work/bags/bbb.bag'
+    bag_path = '/home/bruce/bags/highway_2.bag'
     rp = RosbagParser(bag_path)
     rp.connect_to_db()
     rp.insert_frame_data_to_db()
-    rp.get_data_from_db()
+    # rp.get_data_from_db()
