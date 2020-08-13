@@ -121,7 +121,7 @@ def getBagByIDAndTimestamp(request, bagid, time):
         result = mycol.find({"timestamp": {"$lte": time}}).limit(3)
         resultstr = result.count()
         for x in result:
-            resultstr = x["topic"] + ":" + x["message"]
+            resultstr = "timestamp" + x["timestamp"] + "topic: " x["topic"] + ":" + x["message"]
 
         return HttpResponse("return data for bag with timestamp %s" % resultstr)
 
