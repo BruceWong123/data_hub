@@ -73,7 +73,7 @@ def getBagByID(request, bagid):
         # return Response(serializer.data)
 
         result = mongo_col.find(
-            {"bagid": bagid, "topic": {"$regex": "^/p"}}).limit(500)
+            {"bagid": bagid, "topic": {"$regex": "^/perception/objects"}}, sort=[("timestamp", 1)]).limit(1000)
         resultstr = ""
         for x in result:
             resultstr += "{" + x["timestamp"] + "}"
@@ -107,20 +107,16 @@ def getBagByIdTime(request, bagid, time):
     if request.method == 'GET':
         serializer = BagSerializer(bag, context={'request': request})
         result = mongo_col.find(
-            {"timestamp": {"$lte": time}, "topic": {"$regex": "^/per"}})
+            {"timestamp": {"$lte": time}, "topic": {"$regex": "^/perception/objects"}})
         resultstr = "no data found"
         for x in result:
-            curr_time = x["timestamp"]
             y = mongo_col.find_one({"$and": [{"topic": {
-                "$regex": "^/c"}}, {"timestamp": {"$lt": curr_time}}]}, sort=[("timestamp", -1)])
+                "$regex": "^/canbus/car_state"}}, {"timestamp": {"$lte": time}}]}, sort=[("timestamp", -1)])
             if not y:
                 break
-            resultstr = "topic: " + y.get('topic') + " timestamp: " + y.get('timestamp')\
-                + " message: " + y.get('message') + " topic: " + \
-                x["topic"] + " timestamp: " + \
-                x.get('timestamp') + " message: " + x["message"]
+            resultstr = y.get('message') + " | " + x["message"]
 
-        return HttpResponse("frame data :  %s" % resultstr)
+        return HttpResponse("%s" % resultstr)
 
     elif request.method == 'PUT':
         serializer = BagSerializer(
@@ -150,11 +146,15 @@ def getBagByIdTimeTopic(request, bagid, time, topic):
         return HttpResponse("can't find by id: %s" % bagid)
 
     if request.method == 'GET':
+        if topic == 'perception':
+            topic = '/perception/objects'
+        elif topic == 'carstate':
+            topic = '/canbus/car_state'
         result = mongo_col.find(
-            {"timestamp": {"$lte": time}})
+            {"timestamp": {"$lte": time}, "topic": topic})
         resultstr = result.count()
         for x in result:
-            resultstr = topic + " : " + x[topic]
+            resultstr = x['message']
 
         return HttpResponse("%s" % resultstr)
 
