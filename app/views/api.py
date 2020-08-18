@@ -155,12 +155,12 @@ def getBagByIdTimeTopic(request, bagid, time, topic):
             {"timestamp": {"$lte": time}, "topic": topic})
         resultstr = result.count()
         for x in result:
-            resultstr = base64.b64decode((x['message'])
-
-        return HttpResponse("%s" % resultstr)
+            resultstr = x['message']
+        binarystr = base64.b64decode(resultstr)
+        return HttpResponse(binarystr)
 
     elif request.method == 'PUT':
-        serializer=BagSerializer(
+        serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
@@ -177,7 +177,7 @@ def getBagByIdTimeTopic(request, bagid, time, topic):
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getBagByCity(request, city):
     try:
-        bag=Bag.objects.filter(city=city)
+        bag = Bag.objects.filter(city=city)
         return HttpResponse("found city by %s" % city)
     except Bag.DoesNotExist:
         # html_template = loader.get_template('page-404.html')
@@ -190,7 +190,7 @@ def getBagByCity(request, city):
         return HttpResponse("can't find city by %s" % city)
 
     elif request.method == 'PUT':
-        serializer=BagSerializer(
+        serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
