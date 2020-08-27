@@ -13,13 +13,17 @@ urlpatterns = [
     url('uploadFile', views.views.uploadFile),
 
     url(r'^api/bags/$', views.api.getAllBags),
-    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$', views.api.getBagByID),
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$',
+        views.api.getAllTimestampsByID),
 
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/$',
-        views.api.getBagByIdTime),
+        views.api.getFrameByIdTime),
+
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
+        views.api.getAllTopicsByID),
 
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
-        views.api.getBagByIdTimeTopic),
+        views.api.getMessageByIdTimeTopic),
 
     url(r'^api/citys/(?P<city>[a-zA-Z]+)/$', views.api.getBagByCity),
 

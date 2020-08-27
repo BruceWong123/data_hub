@@ -16,6 +16,8 @@ from pymongo import MongoClient
 import urllib.parse
 import time
 import base64
+import mysql.connector as mysql
+
 
 username = urllib.parse.quote_plus('deep')
 password = urllib.parse.quote_plus('route')
@@ -24,6 +26,14 @@ mongo_client = MongoClient(
     'mongodb://%s:%s@34.218.26.149/datahub' % (username, password))
 mongo_db = mongo_client["datahub"]
 mongo_col = mongo_db["messages"]
+
+
+HOST = "34.218.26.149"
+DATABASE = "data_hub"
+USER = "deeproute"
+PASSWORD = "deeproute"
+mysql_db = mysql.connect(host=HOST, database=DATABASE,
+                         user=USER, password=PASSWORD)
 
 
 @api_view(['GET', 'POST'])
@@ -60,8 +70,7 @@ def getAllBags(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def getAllTopicsByID(request, bagid):
-    context = {}
+def getAllTopicsByID(request, bagid, topic):
     try:
         bag = Bag.objects.get(bagid=bagid)
     except Bag.DoesNotExist:
@@ -69,14 +78,21 @@ def getAllTopicsByID(request, bagid):
         return HttpResponse("can't find by id: %s" % bagid)
 
     if request.method == 'GET':
+        result = ""
+        if topic == 'topics':
+            mycursor = mysql_db.cursor()
 
-        result = mongo_col.find(
-            {"bagid": bagid, "topic": {"$regex": "^/perception/objects"}}, sort=[("timestamp", 1)]).limit(1000)
-        resultstr = ""
-        for x in result:
-            resultstr += "{" + x["timestamp"] + "}"
+            sql = "SELECT name FROM app_topic WHERE bagid = %s"
+            adr = (bagid, )
 
-        return HttpResponse("all timestamps :  %s" % resultstr)
+            mycursor.execute(sql, adr)
+            myresult = mycursor.fetchall()
+            for row in myresult:
+                result += " "
+                result += str(row[0])
+            return HttpResponse("%s" % result)
+
+        return HttpResponse("all timestamps :  %s" % result)
     elif request.method == 'PUT':
         serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
@@ -90,8 +106,8 @@ def getAllTopicsByID(request, bagid):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def getBagByID(request, bagid):
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getAllTimestampsByID(request, bagid):
     context = {}
     try:
         bag = Bag.objects.get(bagid=bagid)
@@ -104,13 +120,26 @@ def getBagByID(request, bagid):
         # return HttpResponse("return data for bag:  %s" % serializer.data)
         # return Response(serializer.data)
 
-        result = mongo_col.find(
-            {"bagid": bagid, "topic": {"$regex": "^/perception/objects"}}, sort=[("timestamp", 1)]).limit(1000)
-        resultstr = ""
-        for x in result:
-            resultstr += "{" + x["timestamp"] + "}"
+        # result = mongo_col.find(
+        #     {"bagid": bagid, "topic": {"$regex": "^/perception/objects"}}, sort=[("timestamp", 1)]).limit(100)
+        # resultstr = ""
+        # for x in result:
+        #     resultstr += "{" + x["timestamp"] + "}"
 
-        return HttpResponse("all timestamps :  %s" % resultstr)
+        mycursor = mysql_db.cursor()
+
+        sql = "SELECT association FROM app_association WHERE bagid = %s"
+        adr = (bagid, )
+
+        mycursor.execute(sql, adr)
+        myresult = mycursor.fetchall()
+        result = ""
+        for row in myresult:
+            result += " "
+            result += str(row[0])
+        return HttpResponse("%s" % result)
+
+        return HttpResponse("all timestamps :  %s" % result)
     elif request.method == 'PUT':
         serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
@@ -124,8 +153,8 @@ def getBagByID(request, bagid):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def getBagByIdTime(request, bagid, time):
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getFrameByIdTime(request, bagid, time):
     try:
         bag = Bag.objects.get(bagid=bagid)
         stime = int(time)
@@ -165,8 +194,8 @@ def getBagByIdTime(request, bagid, time):
         # return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def getBagByIdTimeTopic(request, bagid, time, topic):
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getMessageByIdTimeTopic(request, bagid, time, topic):
     try:
         bag = Bag.objects.get(bagid=bagid)
         stime = int(time)
