@@ -34,7 +34,7 @@ def getAllBags(request):
         previousPage = 1
         bags = Bag.objects.all()
         page = request.GET.get('page', 1)
-        paginator = Paginator(bags, 5)
+        paginator = Paginator(bags, 100)
         try:
             data = paginator.page(page)
         except PageNotAnInteger:
@@ -57,6 +57,37 @@ def getAllBags(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def getAllTopicsByID(request, bagid):
+    context = {}
+    try:
+        bag = Bag.objects.get(bagid=bagid)
+    except Bag.DoesNotExist:
+        # html_template = loader.get_template('page-404.html')
+        return HttpResponse("can't find by id: %s" % bagid)
+
+    if request.method == 'GET':
+
+        result = mongo_col.find(
+            {"bagid": bagid, "topic": {"$regex": "^/perception/objects"}}, sort=[("timestamp", 1)]).limit(1000)
+        resultstr = ""
+        for x in result:
+            resultstr += "{" + x["timestamp"] + "}"
+
+        return HttpResponse("all timestamps :  %s" % resultstr)
+    elif request.method == 'PUT':
+        serializer = BagSerializer(
+            bag, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        bag.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
