@@ -90,6 +90,7 @@ def getAllTopicsByID(request, bagid, topic):
             for row in myresult:
                 result += " "
                 result += str(row[0])
+            # print(result)
             return HttpResponse("%s" % result)
 
         return HttpResponse("all timestamps :  %s" % result)
