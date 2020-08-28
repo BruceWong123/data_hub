@@ -139,15 +139,14 @@ def getAllTimestampsByID(request, bagid):
 
         mycursor.execute(sql, adr)
         myresult = mycursor.fetchall()
-        result = "xxxx"
+        result = ""
         for row in myresult:
             result += " "
             result += str(row[0])
-        resultstr = len(myresult)
         logger.warning("Your log message is here")
         mycursor.close()
         mysql_db.close()
-        return HttpResponse("%d" % resultstr)
+        return HttpResponse("%s" % result)
 
     elif request.method == 'PUT':
         serializer = BagSerializer(
