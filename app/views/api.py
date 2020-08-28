@@ -18,6 +18,8 @@ import time
 import base64
 import mysql.connector as mysql
 
+import logging
+logger = logging.getLogger(__name__)
 
 username = urllib.parse.quote_plus('deep')
 password = urllib.parse.quote_plus('route')
@@ -80,6 +82,8 @@ def getAllTopicsByID(request, bagid, topic):
     if request.method == 'GET':
         result = ""
         if topic == 'topics':
+            mysql_db = mysql.connect(host=HOST, database=DATABASE,
+                                     user=USER, password=PASSWORD)
             mycursor = mysql_db.cursor()
 
             sql = "SELECT name FROM app_topic WHERE bagid = %s"
@@ -90,7 +94,9 @@ def getAllTopicsByID(request, bagid, topic):
             for row in myresult:
                 result += " "
                 result += str(row[0])
-            return HttpResponse("%s" % result)
+            mycursor.close()
+            mysql_db.close()
+        return HttpResponse("%s" % result)
 
         return HttpResponse("all timestamps :  %s" % result)
     elif request.method == 'PUT':
@@ -124,7 +130,8 @@ def getAllTimestampsByID(request, bagid):
         # resultstr = ""
         # for x in result:
         #     resultstr += "{" + x["timestamp"] + "}"
-
+        mysql_db = mysql.connect(host=HOST, database=DATABASE,
+                                 user=USER, password=PASSWORD)
         mycursor = mysql_db.cursor()
 
         sql = "SELECT association FROM app_association WHERE bagid = %s"
@@ -132,11 +139,16 @@ def getAllTimestampsByID(request, bagid):
 
         mycursor.execute(sql, adr)
         myresult = mycursor.fetchall()
-        result = ""
+        result = "xxxx"
         for row in myresult:
             result += " "
             result += str(row[0])
-        return HttpResponse("%s" % result)
+        resultstr = len(myresult)
+        logger.warning("Your log message is here")
+        mycursor.close()
+        mysql_db.close()
+        return HttpResponse("%d" % resultstr)
+
     elif request.method == 'PUT':
         serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
