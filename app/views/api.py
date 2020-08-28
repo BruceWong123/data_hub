@@ -90,7 +90,6 @@ def getAllTopicsByID(request, bagid, topic):
             for row in myresult:
                 result += " "
                 result += str(row[0])
-            # print(result)
             return HttpResponse("%s" % result)
 
         return HttpResponse("all timestamps :  %s" % result)
@@ -109,7 +108,6 @@ def getAllTopicsByID(request, bagid, topic):
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getAllTimestampsByID(request, bagid):
-    context = {}
     try:
         bag = Bag.objects.get(bagid=bagid)
     except Bag.DoesNotExist:
@@ -139,8 +137,6 @@ def getAllTimestampsByID(request, bagid):
             result += " "
             result += str(row[0])
         return HttpResponse("%s" % result)
-
-        return HttpResponse("all timestamps :  %s" % result)
     elif request.method == 'PUT':
         serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
