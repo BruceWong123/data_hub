@@ -98,7 +98,7 @@ def getAllTopicsByID(request, bagid, topic):
             mysql_db.close()
         return HttpResponse("%s" % result)
 
-        #return HttpResponse("all timestamps :  %s" % result)
+        # return HttpResponse("all timestamps :  %s" % result)
     elif request.method == 'PUT':
         serializer = BagSerializer(
             bag, data=request.data, context={'request': request})
@@ -171,18 +171,19 @@ def getFrameByIdTime(request, bagid, time):
     #     if stime < start or stime > end:
     #         return HttpResponse("time stamp is out of range with range start from %s " % end)
     # except Bag.DoesNotExist:
-    #     return HttpResponse("can't find by id: %s" % bagid) 
-    if request.method == 'GET': 
-        result = mongo_col.find({"bagid": bagid, "timestamp": {"$lte": time}, "topic": {"$regex": "^/perception/objects"}})
+    #     return HttpResponse("can't find by id: %s" % bagid)
+    if request.method == 'GET':
+        result = mongo_col.find({"bagid": bagid, "timestamp": {"$lte": time}, "topic": {
+                                "$regex": "^/perception/objects"}})
         resultstr = "no data found"
         for x in result:
-            y = mongo_col.find_one({"$and": [{"bagid": bagid,"topic": {
+            y = mongo_col.find_one({"$and": [{"bagid": bagid, "topic": {
                 "$regex": "^/canbus/car_state"}}, {"timestamp": {"$lte": time}}]}, sort=[("timestamp", -1)])
             if not y:
                 break
             resultstr = y.get('message') + " | " + x["message"]
 
-        return HttpResponse("%s" %resultstr)
+        return HttpResponse("%s" % resultstr)
 
     # elif request.method == 'PUT':
     #     serializer = BagSerializer(
@@ -217,7 +218,7 @@ def getMessageByIdTimeTopic(request, bagid, time, topic):
         elif topic == 'carstate':
             topic = '/canbus/car_state'
         result = mongo_col.find(
-            {"bagid":bagid, "timestamp": {"$lte": time}, "topic": topic})
+            {"bagid": bagid, "timestamp": time, "topic": topic})
         resultstr = result.count()
         for x in result:
             resultstr = x['message']
