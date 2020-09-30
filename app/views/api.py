@@ -250,10 +250,10 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
             topic = '/canbus/car_state'
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
-        resultstr = " "
+        resultstr = ""
         for x in result:
-            resultstr = x['message']
-        binarystr = base64.b64decode(resultstr)
+            resultstr += x['message']
+        binarystr = resultstr  # base64.b64decode(resultstr)
         return HttpResponse(binarystr)
 
 
