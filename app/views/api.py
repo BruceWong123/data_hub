@@ -32,10 +32,11 @@ mongo_col = mongo_db["messages"]
 
 HOST = "34.218.26.149"
 DATABASE = "data_hub"
-USER = "deeproute"
-PASSWORD = "deeproute"
+USER = "root"
+PASSWORD = "123456"
+PORT = "12345"
 mysql_db = mysql.connect(host=HOST, database=DATABASE,
-                         user=USER, password=PASSWORD)
+                         user=USER, password=PASSWORD, port=PORT)
 
 
 @api_view(['GET', 'POST'])
@@ -83,7 +84,7 @@ def getAllTopicsByID(request, bagid, topic):
         result = ""
         if topic == 'topics':
             mysql_db = mysql.connect(host=HOST, database=DATABASE,
-                                     user=USER, password=PASSWORD)
+                                     user=USER, password=PASSWORD, port=PORT)
             mycursor = mysql_db.cursor()
 
             sql = "SELECT name FROM app_topic WHERE bagid = %s"
@@ -114,11 +115,11 @@ def getAllTopicsByID(request, bagid, topic):
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getAllTimestampsByID(request, bagid):
-    try:
-        bag = Bag.objects.get(bagid=bagid)
-    except Bag.DoesNotExist:
-        # html_template = loader.get_template('page-404.html')
-        return HttpResponse("can't find by id: %s" % bagid)
+    # try:
+    #     bag = Bag.objects.get(bagid=bagid)
+    # except Bag.DoesNotExist:
+    #     # html_template = loader.get_template('page-404.html')
+    #     return HttpResponse("can't find by id: %s" % bagid)
 
     if request.method == 'GET':
         # serializer = BagSerializer(bag, context={'request': request})
@@ -131,7 +132,7 @@ def getAllTimestampsByID(request, bagid):
         # for x in result:
         #     resultstr += "{" + x["timestamp"] + "}"
         mysql_db = mysql.connect(host=HOST, database=DATABASE,
-                                 user=USER, password=PASSWORD)
+                                 user=USER, password=PASSWORD, port=PORT)
         mycursor = mysql_db.cursor()
 
         sql = "SELECT association FROM app_association WHERE bagid = %s"
@@ -202,15 +203,15 @@ def getFrameByIdTime(request, bagid, time):
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getMessageByIdTimeTopic(request, bagid, time, topic):
-    try:
-        bag = Bag.objects.get(bagid=bagid)
-        stime = int(time)
-        start = int(bag.start)
-        end = int(bag.end)
-        if stime < start or stime > end:
-            return HttpResponse("time stamp is out of range : %s " % stime)
-    except Bag.DoesNotExist:
-        return HttpResponse("can't find by id: %s" % bagid)
+    # try:
+    #     bag = Bag.objects.get(bagid=bagid)
+    #     stime = int(time)
+    #     # start = int(bag.start)
+    #     # end = int(bag.end)
+    #     # if stime < start or stime > end:
+    #     #     return HttpResponse("time stamp is out of range : %s " % stime)
+    # except Bag.DoesNotExist:
+    #     return HttpResponse("can't find by id: %s" % bagid)
 
     if request.method == 'GET':
         if topic == 'perception':
@@ -219,25 +220,41 @@ def getMessageByIdTimeTopic(request, bagid, time, topic):
             topic = '/canbus/car_state'
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": time, "topic": topic})
-        resultstr = result.count()
+        resultstr = " "
         for x in result:
             resultstr = x['message']
         binarystr = base64.b64decode(resultstr)
         return HttpResponse(binarystr)
 
-    elif request.method == 'PUT':
-        serializer = BagSerializer(
-            bag, data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return HttpResponse("put in get bag by id and time stamp")
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # elif request.method == 'PUT':
+    #     serializer = BagSerializer(
+    #         bag, data=request.data, context={'request': request})
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return HttpResponse("put in get bag by id and time stamp")
+    #     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
-        bag.delete()
-        return HttpResponse("delete in get bag by id and time stamp")
-        # return Response(status=status.HTTP_204_NO_CONTENT)
+    # elif request.method == 'DELETE':
+    #     bag.delete()
+    #     return HttpResponse("delete in get bag by id and time stamp")
+    #     # return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
+    if request.method == 'GET':
+        if topic == 'perception':
+            topic = '/perception/objects'
+        elif topic == 'carstate':
+            topic = '/canbus/car_state'
+        result = mongo_col.find(
+            {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
+        resultstr = " "
+        for x in result:
+            resultstr = x['message']
+        binarystr = base64.b64decode(resultstr)
+        return HttpResponse(binarystr)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

@@ -22,13 +22,17 @@ urlpatterns = [
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/$',
         views.api.getFrameByIdTime),
 
-    # get all topics names by bag id
-    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
-        views.api.getAllTopicsByID),
+    # # get all topics names by bag id
+    # url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
+    #     views.api.getAllTopicsByID),
 
     # get body of message for certain topic given bag id and timestamp
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<time>[0-9]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
         views.api.getMessageByIdTimeTopic),
+
+    # get body of message for certain topic given bag id and timestamp
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<topic>[0-9a-zA-Z_]+)/(?P<start>[0-9]+)/(?P<end>[0-9]+)/$',
+        views.api.getMessageByIdTimeTopicRange),
 
 
     url(r'^api/citys/(?P<city>[a-zA-Z]+)/$', views.api.getBagByCity),
