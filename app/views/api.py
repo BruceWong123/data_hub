@@ -256,7 +256,7 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
             # todo cancatinate two decoded string
             resultstr += x['message']
             if i != result.count() - 1:
-                resultstr += "||||||"
+                resultstr += "deep_route"
         #binarystr = base64.b64decode(resultstr)
 
         return HttpResponse(resultstr)
