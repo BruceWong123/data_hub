@@ -250,12 +250,16 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
             topic = '/canbus/car_state'
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
-        resultstr = ""
-        start_time = time.time()
-        for x in result:
-            resultstr += x['message']   # todo cancatinate two decoded string
-        binarystr = base64.b64decode(resultstr)
-        return HttpResponse(binarystr)
+        resultstr = []
+        for i, x in enumerate(result):
+            # todo cancatinate two decoded string
+            resultstr.append(base64.b64decode(x['message']))
+            if i != result.count() - 1:
+                resultstr.append("deeproute")
+                print(i)
+        #binarystr = base64.b64decode(resultstr)
+
+        return HttpResponse(resultstr)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
