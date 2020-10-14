@@ -18,6 +18,7 @@ import time
 import base64
 import mysql.connector as mysql
 
+import json
 import logging
 logger = logging.getLogger(__name__)
 
@@ -250,13 +251,12 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
             topic = '/canbus/car_state'
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
-        resultstr = []
+        resultstr = ""
         for i, x in enumerate(result):
             # todo cancatinate two decoded string
-            resultstr.append(base64.b64decode(x['message']))
+            resultstr += x['message']
             if i != result.count() - 1:
-                resultstr.append("deeproute")
-                print(i)
+                resultstr += "||||||"
         #binarystr = base64.b64decode(resultstr)
 
         return HttpResponse(resultstr)
