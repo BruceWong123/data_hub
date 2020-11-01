@@ -224,8 +224,8 @@ def getMessageByIdTimeTopic(request, bagid, time, topic):
         resultstr = " "
         for x in result:
             resultstr = x['message']
-        binarystr = base64.b64decode(resultstr)
-        return HttpResponse(binarystr)
+        #binarystr = base64.b64decode(resultstr)
+        return HttpResponse(resultstr)
 
     # elif request.method == 'PUT':
     #     serializer = BagSerializer(
@@ -249,6 +249,9 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
             topic = '/perception/objects'
         elif topic == 'carstate':
             topic = '/canbus/car_state'
+        elif topic == 'signals_response':
+            topic = '/perception/signals_response'
+
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
         resultstr = ""
