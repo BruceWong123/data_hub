@@ -202,6 +202,19 @@ def getFrameByIdTime(request, bagid, time):
     #     # return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+def translateTopic(topic):
+    if topic == 'perception':
+        return '/perception/objects'
+    elif topic == 'carstate':
+        return '/canbus/car_state'
+    elif topic == 'signals_response':
+        return '/perception/signals_response'
+    elif topic == 'context':
+        return '/planner/context'
+    elif topic == 'debug_info':
+        return '/planner/debug_info'
+
+
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getMessageByIdTimeTopic(request, bagid, time, topic):
     # try:
@@ -215,10 +228,7 @@ def getMessageByIdTimeTopic(request, bagid, time, topic):
     #     return HttpResponse("can't find by id: %s" % bagid)
 
     if request.method == 'GET':
-        if topic == 'perception':
-            topic = '/perception/objects'
-        elif topic == 'carstate':
-            topic = '/canbus/car_state'
+        topic = translateTopic(topic)
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": time, "topic": topic})
         resultstr = " "
@@ -245,13 +255,7 @@ def getMessageByIdTimeTopic(request, bagid, time, topic):
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
     if request.method == 'GET':
-        if topic == 'perception':
-            topic = '/perception/objects'
-        elif topic == 'carstate':
-            topic = '/canbus/car_state'
-        elif topic == 'signals_response':
-            topic = '/perception/signals_response'
-
+        topic = translateTopic(topic)
         result = mongo_col.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
         resultstr = ""
