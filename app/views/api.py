@@ -26,7 +26,7 @@ username = urllib.parse.quote_plus('deep')
 password = urllib.parse.quote_plus('route')
 
 mongo_client = MongoClient(
-    'mongodb://%s:%s@34.222.199.103/datahub' % (username, password))
+    'mongodb://%s:%s@34.222.199.103:%s/datahub' % (username, password, "27117"))
 mongo_db = mongo_client["datahub"]
 mongo_col = mongo_db["messages"]
 
@@ -116,8 +116,7 @@ def getAllTopicsByID(request, bagid, topic):
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getAllTimestampsByID(request, bagid):
-    # try:
-    #     bag = Bag.objects.get(bagid=bagid)
+    # try:nsert_one exampled)
     # except Bag.DoesNotExist:
     #     # html_template = loader.get_template('page-404.html')
     #     return HttpResponse("can't find by id: %s" % bagid)
