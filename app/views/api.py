@@ -26,7 +26,7 @@ username = urllib.parse.quote_plus('deep')
 password = urllib.parse.quote_plus('route')
 
 mongo_client = MongoClient(
-    'mongodb://%s:%s@34.222.199.103:%s/datahub' % (username, password, "27117"))
+    'mongodb://%s:%s@10.9.9.9:%s/datahub' % (username, password, "30002"))
 mongo_db = mongo_client["datahub"]
 mongo_col = mongo_db["messages"]
 
