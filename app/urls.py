@@ -14,6 +14,10 @@ urlpatterns = [
 
     url(r'^api/bags/$', views.api.getAllBags),
 
+    # upload column into result
+    url(r'^api/upload/(?P<bagid>[0-9a-zA-Z_]+)/(?P<version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
+        views.api.uploadNewDataByIDVersionTime),
+
     # get all matching timestamps by bagid
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getAllTimestampsByID),
