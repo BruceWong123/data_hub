@@ -29,7 +29,8 @@ mongo_client = MongoClient(
     'mongodb://%s:%s@10.9.9.9:%s/datahub' % (username, password, "30002"))
 mongo_db = mongo_client["datahub"]
 db_messages = mongo_db["messages"]
-db_results = mongo_db["results"]
+db_frame_results = mongo_db["frame_results"]
+db_bag_results = mongo_db["bag_results"]
 HOST = "34.218.26.149"
 DATABASE = "data_hub"
 USER = "root"
@@ -199,25 +200,68 @@ def getBagByCity(request, city):
 
 
 @ api_view(['POST'])
-def uploadNewDataByIDVersionTime(request, bagid, version, timestamp):
+def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_version, play_mode):
+    if request.method == 'POST':
+        if request.data is None:
+            return
+        data = db_bag_results.find_one(
+            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
+        if data is None:
+            if request.data is not None:
+                data_dict = {
+                    "bagid": bagid,
+                    "function_version": function_version,
+                    "grading_version": grading_version,
+                    "play_mode": play_mode,
+                    "result": request.data
+                }
+                db_bag_results.insert_one(data_dict)
+        else:
+            db_bag_results.update(
+                {
+                    "_id": data.get('_id')
+                },
+                {"$set": {
+                    "result": request.data
+                }
+                }
+            )
+
+
+@ api_view(['GET'])
+def getBagResultByIDVersionMode(request, bagid, function_version, grading_version, play_mode):
+    if request.method == 'GET':
+        if request.data is None:
+            return
+        data = db_bag_results.find_one(
+            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
+        if data is None:
+            return ""
+        else:
+            return data.get('result')
+
+
+@ api_view(['POST'])
+def uploadFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
     if request.method == 'POST':
         if request.data is None:
             return
         key = list(request.data.keys())[0]
         value = list(request.data.values())[0]
-        data = db_results.find_one(
-            {"bagid": bagid, "version": version, "timestamp": timestamp})
+        data = db_frame_results.find_one(
+            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
         if data is None:
             if request.data is not None:
                 data_dict = {
                     "bagid": bagid,
-                    "version": version,
+                    "function_version": function_version,
+                    "grading_version": grading_version,
                     "timestamp": timestamp,
                     key: value
                 }
-                db_results.insert_one(data_dict)
+                db_frame_results.insert_one(data_dict)
         else:
-            db_results.update(
+            db_frame_results.update(
                 {
                     "_id": data.get('_id')
                 },
@@ -226,3 +270,17 @@ def uploadNewDataByIDVersionTime(request, bagid, version, timestamp):
                 }
                 }
             )
+
+
+@ api_view(['GET'])
+def getFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
+    if request.method == 'GET':
+        if request.data is None:
+            return
+        data = db_frame_results.find_one(
+            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
+        if data is None:
+            return {}
+        else:
+            result = data.get('debug_info')
+            return {"debug_info": list(result.values())[0]}

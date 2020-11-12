@@ -14,9 +14,23 @@ urlpatterns = [
 
     url(r'^api/bags/$', views.api.getAllBags),
 
-    # upload column into result
-    url(r'^api/upload/(?P<bagid>[0-9a-zA-Z_]+)/(?P<version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
-        views.api.uploadNewDataByIDVersionTime),
+    # upload column into frame result
+    url(r'^api/upload/(?P<bagid>[0-9a-zA-Z_]+)/(?P<function_version>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
+        views.api.uploadFrameResultByIDVersionTime),
+
+    # upload column into bag result
+    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<function_version>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<play_mode>[a-zA-Z_]+)/$',
+        views.api.uploadBagResultByIDVersionMode),
+
+
+    # get data from frame result
+    url(r'^api/results/(?P<bagid>[0-9a-zA-Z_]+)/(?P<function_version>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
+        views.api.getFrameResultByIDVersionTime),
+
+    # get data from bag result
+    url(r'^api/results/(?P<bagid>[0-9a-zA-Z_]+)/(?P<function_version>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<play_mode>[a-zA-Z_]+)/$',
+        views.api.getBagResultByIDVersionMode),
+
 
     # get all matching timestamps by bagid
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$',
