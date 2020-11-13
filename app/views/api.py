@@ -168,9 +168,10 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
     if request.method == 'GET':
         topic = translateTopic(topic)
         result = db_messages.find(
-            {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort({"timestamp" : 1})
+            {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
         resultstr = ""
         for i, x in enumerate(result):
+            print(x['timestamp'])
             resultstr += x['message']
             if i != result.count() - 1:
                 resultstr += "deep_route"
