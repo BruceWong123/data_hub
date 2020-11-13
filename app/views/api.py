@@ -168,7 +168,7 @@ def getMessageByIdTimeTopicRange(request, bagid, topic, start, end):
     if request.method == 'GET':
         topic = translateTopic(topic)
         result = db_messages.find(
-            {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic})
+            {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort({"timestamp" : 1})
         resultstr = ""
         for i, x in enumerate(result):
             resultstr += x['message']
