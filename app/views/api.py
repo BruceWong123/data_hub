@@ -236,10 +236,10 @@ def getBagResultByIDVersionMode(request, bagid, function_version, grading_versio
             return
         data = db_bag_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
-        if data is None:
-            return ""
-        else:
-            return data.get('result')
+        result_str = "Not found"
+        if data is not None:
+            result_str = data.get('result')
+        return HttpResponse("%s" % result_str)
 
 
 @ api_view(['POST'])
@@ -280,8 +280,8 @@ def getFrameResultByIDVersionTime(request, bagid, function_version, grading_vers
             return
         data = db_frame_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
-        if data is None:
-            return {}
-        else:
+        result_str = "Not found"
+        if data is not None:
             result = data.get('debug_info')
-            return {"debug_info": list(result.values())[0]}
+            result_str = list(result.values())[0]
+        return HttpResponse("%s" % result_str)
