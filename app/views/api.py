@@ -217,6 +217,7 @@ def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_ver
                     "result": request.data
                 }
                 db_bag_results.insert_one(data_dict)
+
         else:
             db_bag_results.update(
                 {
@@ -232,14 +233,12 @@ def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_ver
 @ api_view(['GET'])
 def getBagResultByIDVersionMode(request, bagid, function_version, grading_version, play_mode):
     if request.method == 'GET':
-        if request.data is None:
-            return
         data = db_bag_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
         result_str = "Not found"
         if data is not None:
             result_str = data.get('result')
-        return HttpResponse("%s" % result_str)
+        return HttpResponse(result_str)
 
 
 @ api_view(['POST'])
@@ -276,12 +275,10 @@ def uploadFrameResultByIDVersionTime(request, bagid, function_version, grading_v
 @ api_view(['GET'])
 def getFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
     if request.method == 'GET':
-        if request.data is None:
-            return
         data = db_frame_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
         result_str = "Not found"
         if data is not None:
             result = data.get('debug_info')
             result_str = list(result.values())[0]
-        return HttpResponse("%s" % result_str)
+        return HttpResponse(result_str)

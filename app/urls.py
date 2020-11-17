@@ -19,7 +19,7 @@ urlpatterns = [
         views.api.uploadFrameResultByIDVersionTime),
 
     # upload column into bag result
-    url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/(?P<function_version>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<play_mode>[a-zA-Z_]+)/$',
+    url(r'^api/upload/(?P<bagid>[0-9a-zA-Z_]+)/(?P<function_version>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<play_mode>[a-zA-Z_]+)/$',
         views.api.uploadBagResultByIDVersionMode),
 
 
