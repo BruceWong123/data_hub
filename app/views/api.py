@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django import template
 
 from rest_framework.response import Response
@@ -205,28 +205,56 @@ def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_ver
     if request.method == 'POST':
         if request.data is None:
             return
+        data_dict = request.data.dict()
+
         data = db_bag_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
-        value = list(request.data.values())[0]
+
         if data is None:
             if request.data is not None:
-                data_dict = {
+                metadata_dict = {
                     "bagid": bagid,
                     "function_version": function_version,
                     "grading_version": grading_version,
-                    "play_mode": play_mode,
-                    "result": value
+                    "play_mode": play_mode
                 }
-                db_bag_results.insert_one(data_dict)
+                db_bag_results.insert_one({**metadata_dict, **data_dict})
 
         else:
             db_bag_results.update(
                 {
                     "_id": data.get('_id')
-                },
-                {"$set": {
-                    "result": value
+                }, {
+                    "$set": data_dict
                 }
+            )
+
+
+@ api_view(['POST'])
+def uploadFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
+    if request.method == 'POST':
+        if request.data is None:
+            return
+        data_dict = request.data.dict()
+
+        data = db_frame_results.find_one(
+            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
+
+        if data is None:
+            if request.data is not None:
+                metadata_dict = {
+                    "bagid": bagid,
+                    "function_version": function_version,
+                    "grading_version": grading_version,
+                    "timestamp": timestamp
+                }
+                db_frame_results.insert_one({**metadata_dict, **data_dict})
+        else:
+            db_frame_results.update(
+                {
+                    "_id": data.get('_id')
+                }, {
+                    "$set": data_dict
                 }
             )
 
@@ -236,40 +264,10 @@ def getBagResultByIDVersionMode(request, bagid, function_version, grading_versio
     if request.method == 'GET':
         data = db_bag_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
+        print(data)
         if data is not None:
             result_str = data.get('result')
-        return HttpResponse(result_str)
-
-
-@ api_view(['POST'])
-def uploadFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
-    if request.method == 'POST':
-        if request.data is None:
-            return
-        key = list(request.data.keys())[0]
-        value = list(request.data.values())[0]
-        data = db_frame_results.find_one(
-            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
-        if data is None:
-            if request.data is not None:
-                data_dict = {
-                    "bagid": bagid,
-                    "function_version": function_version,
-                    "grading_version": grading_version,
-                    "timestamp": timestamp,
-                    key: value
-                }
-                db_frame_results.insert_one(data_dict)
-        else:
-            db_frame_results.update(
-                {
-                    "_id": data.get('_id')
-                },
-                {"$set": {
-                    key: value
-                }
-                }
-            )
+        return JsonResponse({'result': result_str})
 
 
 @ api_view(['GET'])
@@ -277,7 +275,8 @@ def getFrameResultByIDVersionTime(request, bagid, function_version, grading_vers
     if request.method == 'GET':
         data = db_frame_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
+        print(data)
         result_str = "Not found"
         if data is not None:
             result_str = data.get('debug_info')
-        return HttpResponse(result_str)
+        return JsonResponse({'debug_info': result_str})

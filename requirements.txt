@@ -9,3 +9,8 @@ dj-database-url
 python-decouple
 gunicorn
 whitenoise
+pymysql
+mysqlclient
+djangorestframework
+pymongo
+mysql-connector
