@@ -207,6 +207,7 @@ def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_ver
             return
         data = db_bag_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
+        value = list(request.data.values())[0]
         if data is None:
             if request.data is not None:
                 data_dict = {
@@ -214,7 +215,7 @@ def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_ver
                     "function_version": function_version,
                     "grading_version": grading_version,
                     "play_mode": play_mode,
-                    "result": request.data
+                    "result": value
                 }
                 db_bag_results.insert_one(data_dict)
 
@@ -224,7 +225,7 @@ def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_ver
                     "_id": data.get('_id')
                 },
                 {"$set": {
-                    "result": request.data
+                    "result": value
                 }
                 }
             )
@@ -235,7 +236,6 @@ def getBagResultByIDVersionMode(request, bagid, function_version, grading_versio
     if request.method == 'GET':
         data = db_bag_results.find_one(
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
-        result_str = "Not found"
         if data is not None:
             result_str = data.get('result')
         return HttpResponse(result_str)
@@ -279,6 +279,5 @@ def getFrameResultByIDVersionTime(request, bagid, function_version, grading_vers
             {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
         result_str = "Not found"
         if data is not None:
-            result = data.get('debug_info')
-            result_str = list(result.values())[0]
+            result_str = data.get('debug_info')
         return HttpResponse(result_str)
