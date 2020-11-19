@@ -89,25 +89,25 @@ class DBManager(object):
         self.close_mysql()
         return result
 
-    def get_frame_by_id_time(self, bagid, time):
+    def get_frame_by_id_time(self, bagid, timestamp):
         result = "no data found"
         db_messages = self.mongo_db["messages"]
-        query_result = db_messages.find({"bagid": bagid, "timestamp": {"$lte": time}, "topic": {
+        query_result = db_messages.find({"bagid": bagid, "timestamp": {"$lte": timestamp}, "topic": {
             "$regex": "^/perception/objects"}})
         for x in query_result:
             y = db_messages.find_one({"$and": [{"bagid": bagid, "topic": {
-                "$regex": "^/canbus/car_state"}}, {"timestamp": {"$lte": time}}]}, sort=[("timestamp", -1)])
+                "$regex": "^/canbus/car_state"}}, {"timestamp": {"$lte": timestamp}}]}, sort=[("timestamp", -1)])
             if not y:
                 break
             result = y.get('message') + " | " + x["message"]
         return result
 
-    def get_message_by_id_time_topic(self, bagid, time, topic):
+    def get_message_by_id_time_topic(self, bagid, timestamp, topic):
         result = " "
         db_messages = self.mongo_db["messages"]
         topic = self.translateTopic(topic)
         query_result = db_messages.find(
-            {"bagid": bagid, "timestamp": time, "topic": topic})
+            {"bagid": bagid, "timestamp": timestamp, "topic": topic})
         for x in query_result:
             result = x['message']
         return result
@@ -124,22 +124,18 @@ class DBManager(object):
                 result += "deep_route"
         return result
 
-    def upload_bag_result_by_id_version_mode(self, data_dict, bagid, function_version, grading_version, play_mode):
-        db_bag_results = self.mongo_db["bag_results"]
-        query_result = db_bag_results.find_one(
-            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
-
+    def upload_message_by_id_topic(self, data_dict, bagid, timestamp, topic):
+        db_bag_data = self.mongo_db["messages"]
+        query_result = db_bag_data.find_one(
+            {"bagid": bagid, "timestamp": timestamp})
         if query_result is None:
             metadata_dict = {
                 "bagid": bagid,
-                "function_version": function_version,
-                "grading_version": grading_version,
-                "play_mode": play_mode
+                "timestamp": timestamp,
             }
-            db_bag_results.insert_one({**metadata_dict, **data_dict})
-
+            db_bag_data.insert_one({**metadata_dict, **data_dict})
         else:
-            db_bag_results.update(
+            db_bag_data.update(
                 {
                     "_id": query_result.get('_id')
                 }, {
@@ -147,24 +143,90 @@ class DBManager(object):
                 }
             )
 
-    def get_bag_result_by_id_version_mode(self, bagid, function_version, grading_version, play_mode):
+# task related
+    def get_taskinfo_by_id(self, taskid):
+        db_task_data = self.mongo_db["tasks"]
+        query_result = db_task_data.find_one({"taskid": taskid})
+        if query_result is None:
+            return {"result": "Not Found"}
+        else:
+            data_dict = {
+                "taskid": taskid,
+                "play_mode": query_result.get(play_mode),
+                "scene_id": query_result.get(scene_id),
+                "subscene_id": query_result.get(subscene_id),
+                "planning_version": query_result.get(planning_version),
+                "perception_version": query_result.get(perception_version)
+            }
+            return data_dict
+
+    def upload_task_info(self, taskid, play_mode, scene_id, subscene_id, planning_version, perception_version):
+        db_task_data = self.mongo_db["tasks"]
+        query_result = db_task_data.find_one({"taskid": taskid})
+        metadata_dict = {
+            "taskid": taskid
+        }
+        data_dict = {
+            "play_mode": play_mode,
+            "scene_id": scene_id,
+            "subscene_id": subscene_id,
+            "planning_version": planning_version,
+            "perception_version": perception_version
+        }
+        if query_result is None:
+            db_bag_data.insert_one({**metadata_dict, **data_dict})
+        else:
+            db_bag_data.update(
+                {
+                    "_id": query_result.get('_id')
+                }, {
+                    "$set": data_dict
+                }
+            )
+
+
+# result related
+
+
+    def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
+        db_task_results = self.mongo_db["task_results"]
+        query_result = db_task_results.find_one(
+            {"taskid": taskid,  "grading_version": grading_version, "play_mode": play_mode})
+
+        if query_result is None:
+            metadata_dict = {
+                "taskid": taskid,
+                "grading_version": grading_version,
+                "play_mode": play_mode
+            }
+            db_task_results.insert_one({**metadata_dict, **data_dict})
+
+        else:
+            db_task_results.update(
+                {
+                    "_id": query_result.get('_id')
+                }, {
+                    "$set": data_dict
+                }
+            )
+
+    def get_task_result_by_id_version_mode(self, taskid, grading_version, play_mode):
         result = ""
-        db_bag_results = self.mongo_db["bag_results"]
-        query_result = db_bag_results.find_one(
-            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "play_mode": play_mode})
+        db_task_results = self.mongo_db["task_results"]
+        query_result = db_task_results.find_one(
+            {"taskid": taskid,  "grading_version": grading_version, "play_mode": play_mode})
         if query_result is not None:
             result = query_result.get('result')
         return result
 
-    def upload_frame_result_by_id_version_mode(self, data_dict, bagid, function_version, grading_version, timestamp):
+    def upload_task_frame_result_by_id_version_mode(self, data_dict, taskid, grading_version, timestamp):
         db_frame_results = self.mongo_db["frame_results"]
         query_result = db_frame_results.find_one(
-            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
+            {"taskid": taskid,  "grading_version": grading_version, "timestamp": timestamp})
 
         if query_result is None:
             metadata_dict = {
-                "bagid": bagid,
-                "function_version": function_version,
+                "taskid": taskid,
                 "grading_version": grading_version,
                 "timestamp": timestamp
             }
@@ -178,11 +240,11 @@ class DBManager(object):
                 }
             )
 
-    def get_frame_result_by_id_version_mode(self, bagid, function_version, grading_version, timestamp):
+    def get_task_frame_result_by_id_version_mode(self, taskid, grading_version, timestamp):
         db_frame_results = self.mongo_db["frame_results"]
         result = ""
         query_result = db_frame_results.find_one(
-            {"bagid": bagid, "function_version": function_version, "grading_version": grading_version, "timestamp": timestamp})
+            {"taskid": taskid,  "grading_version": grading_version, "timestamp": timestamp})
         if query_result is not None:
             result = query_result.get('debug_info')
         return result

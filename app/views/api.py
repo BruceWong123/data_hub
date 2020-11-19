@@ -27,15 +27,24 @@ def getAllTimestampsByID(request, bagid):
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
-def getFrameByIdTime(request, bagid, time):
+def getFrameByIdTime(request, bagid, timestamp):
     if request.method == 'GET':
-        return HttpResponse(db.get_frame_by_id_time(bagid, time))
+        return HttpResponse(db.get_frame_by_id_time(bagid, timestamp))
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
-def getMessageByIdTimeTopic(request, bagid, time, topic):
+def getMessageByIdTimeTopic(request, bagid, timestamp, topic):
     if request.method == 'GET':
-        return HttpResponse(db.get_message_by_id_time_topic(bagid, time, topic))
+        return HttpResponse(db.get_message_by_id_time_topic(bagid, timestamp, topic))
+
+
+@ api_view(['GET', 'POST', 'DELETE'])
+def uploadMessageByIdTimeTopic(request, bagid, timestamp, topic):
+    if request.method == 'POST':
+        if request.data is not None:
+            data_dict = request.data.dict()
+            db.upload_message_by_id_topic(
+                data_dict, bagid, timestamp, topic)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -43,36 +52,52 @@ def getRangeMessageByIdTopic(request, bagid, topic, start, end):
     if request.method == 'GET':
         return HttpResponse(db.get_range_message_by_id_topic(bagid, topic, start, end))
 
+# task related
 
+
+@ api_view(['GET', 'POST', 'DELETE'])
+def uploadTaskInfo(request, taskid, play_mode, scene_id, subscene_id, planning_version, perception_version):
+    if request.method == 'POST':
+        db.upload_task_info(
+            taskid, play_mode, scene_id, subscene_id, planning_version, perception_version)
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getTaskInfoById(request, taskid):
+    if request.method == 'GET':
+        return JsonResponse(db.get_taskinfo_by_id(taskid))
+
+
+# task/frame result related
 @ api_view(['POST'])
-def uploadBagResultByIDVersionMode(request, bagid, function_version, grading_version, play_mode):
+def uploadBagResultByIDVersionMode(request, taskid, grading_version, play_mode):
     if request.method == 'POST':
         if request.data is not None:
             data_dict = request.data.dict()
-            db.upload_bag_result_by_id_version_mode(
-                data_dict, bagid, function_version, grading_version, play_mode)
+            db.upload_task_result_by_id_version_mode(
+                data_dict, taskid, grading_version, play_mode)
 
 
 @ api_view(['POST'])
-def uploadFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
+def uploadFrameResultByIDVersionTime(request, taskid, grading_version, timestamp):
     if request.method == 'POST':
         if request.data is not None:
             data_dict = request.data.dict()
-            db.upload_frame_result_by_id_version_mode(
-                data_dict, bagid, function_version, grading_version, timestamp)
+            db.upload_task_frame_result_by_id_version_mode(
+                data_dict, taskid, grading_version, timestamp)
 
 
 @ api_view(['GET'])
-def getBagResultByIDVersionMode(request, bagid, function_version, grading_version, play_mode):
+def getBagResultByIDVersionMode(request, taskid, grading_version, play_mode):
     if request.method == 'GET':
-        result_str = db.get_bag_result_by_id_version_mode(
-            bagid, function_version, grading_version, play_mode)
+        result_str = db.get_task_result_by_id_version_mode(
+            taskid, grading_version, play_mode)
         return JsonResponse({'result': result_str})
 
 
 @ api_view(['GET'])
-def getFrameResultByIDVersionTime(request, bagid, function_version, grading_version, timestamp):
+def getFrameResultByIDVersionTime(request, taskid, grading_version, timestamp):
     if request.method == 'GET':
-        result_str = db.get_frame_result_by_id_version_mode(
-            bagid, function_version, grading_version, timestamp)
+        result_str = db.get_task_frame_result_by_id_version_mode(
+            taskid, grading_version, timestamp)
         return JsonResponse({'debug_info': result_str})
