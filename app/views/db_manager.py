@@ -101,6 +101,18 @@ class DBManager(object):
         self.close_mysql()
         return result
 
+    def get_all_bag_id(self):
+        result = ""
+        self.connect_to_mysql()
+        sql = "SELECT bagid FROM app_bag"
+        self.mysql_cursor.execute(sql)
+        query_result = self.mysql_cursor.fetchall()
+        for row in query_result:
+            result += " "
+            result += str(row[0])
+        self.close_mysql()
+        return result
+
     def get_frame_by_id_time(self, bagid, timestamp):
         result = "no data found"
         db_messages = self.mongo_db["messages"]
@@ -211,7 +223,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

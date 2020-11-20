@@ -30,6 +30,9 @@ urlpatterns = [
     url(r'^api/results/(?P<taskid>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<play_mode>[a-zA-Z_]+)/$',
         views.api.getTaskResultByIDVersionMode),
 
+    # get all bagid
+    url(r'^api/bags/all/$',
+        views.api.getAllBagID),
 
     # get all matching timestamps by bagid
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$',

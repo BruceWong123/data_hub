@@ -21,6 +21,12 @@ db = DBManager()
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
+def getAllBagID(request):
+    if request.method == 'GET':
+        return HttpResponse(db.get_all_bag_id())
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
 def getAllTimestampsByID(request, bagid):
     if request.method == 'GET':
         return HttpResponse(db.get_all_timestamps_by_id(bagid))
