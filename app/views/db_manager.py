@@ -4,7 +4,6 @@ import time
 import base64
 import zlib
 import pprint
-import requests
 import configparser
 from pymongo import MongoClient
 import six.moves.urllib as urllib
