@@ -78,12 +78,12 @@ class DBManager(object):
             return topic
 
     def _assemble_topic_with_version(self, topic, version):
-        if version != "":
+        if version != "" and version != "default_version":
             topic = topic + '_' + version
         return topic
 
     def _assemble_message_with_version(self, message, version):
-        if version != "":
+        if version != "" and version != "default_version":
             message = message + '_' + version
         return message
 
