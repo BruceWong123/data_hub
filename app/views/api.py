@@ -33,18 +33,20 @@ def getFrameByIdTime(request, bagid, timestamp):
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
-def getMessageByIdTimeTopic(request, bagid, timestamp, topic):
+def getMessageByIdTimeTopicVersion(request, bagid, timestamp, topic, version):
     if request.method == 'GET':
-        return HttpResponse(db.get_message_by_id_time_topic(bagid, timestamp, topic))
+        message = db.get_message_by_id_time_topic_version(
+            bagid, timestamp, topic, version)
+        return JsonResponse({topic: message})
 
 
 @ api_view(['GET', 'POST', 'DELETE'])
-def uploadMessageByIdTimeTopic(request, bagid, timestamp, topic):
+def uploadMessageByIdTimeTopicVersion(request, bagid, timestamp, topic, version):
     if request.method == 'POST':
         if request.data is not None:
             data_dict = request.data.dict()
-            db.upload_message_by_id_topic(
-                data_dict, bagid, timestamp, topic)
+            db.upload_message_by_id_time_topic_version(
+                data_dict, bagid, timestamp, topic, version)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -69,8 +71,9 @@ def getTaskInfoById(request, taskid):
 
 
 # task/frame result related
+
 @ api_view(['POST'])
-def uploadBagResultByIDVersionMode(request, taskid, grading_version, play_mode):
+def uploadTaskResultByIDVersionMode(request, taskid, grading_version, play_mode):
     if request.method == 'POST':
         if request.data is not None:
             data_dict = request.data.dict()
@@ -79,16 +82,16 @@ def uploadBagResultByIDVersionMode(request, taskid, grading_version, play_mode):
 
 
 @ api_view(['POST'])
-def uploadFrameResultByIDVersionTime(request, taskid, grading_version, timestamp):
+def uploadTaskFrameResultByIDVersionTime(request, taskid, grading_version, timestamp):
     if request.method == 'POST':
         if request.data is not None:
             data_dict = request.data.dict()
-            db.upload_task_frame_result_by_id_version_mode(
+            db.upload_task_frame_result_by_id_version_time(
                 data_dict, taskid, grading_version, timestamp)
 
 
 @ api_view(['GET'])
-def getBagResultByIDVersionMode(request, taskid, grading_version, play_mode):
+def getTaskResultByIDVersionMode(request, taskid, grading_version, play_mode):
     if request.method == 'GET':
         result_str = db.get_task_result_by_id_version_mode(
             taskid, grading_version, play_mode)
@@ -96,8 +99,8 @@ def getBagResultByIDVersionMode(request, taskid, grading_version, play_mode):
 
 
 @ api_view(['GET'])
-def getFrameResultByIDVersionTime(request, taskid, grading_version, timestamp):
+def getTaskFrameResultByIDVersionMode(request, taskid, grading_version, timestamp):
     if request.method == 'GET':
-        result_str = db.get_task_frame_result_by_id_version_mode(
+        result_str = db.get_task_frame_result_by_id_version_time(
             taskid, grading_version, timestamp)
         return JsonResponse({'debug_info': result_str})
