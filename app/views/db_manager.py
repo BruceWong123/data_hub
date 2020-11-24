@@ -146,7 +146,7 @@ class DBManager(object):
         query_result = db_messages.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
         for i, x in enumerate(query_result):
-            result += x['message']
+            result += x['timestamp'] + "timestamp_and_message" + x['message']
             if i != query_result.count() - 1:
                 result += "deep_route"
         return result
