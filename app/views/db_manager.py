@@ -112,6 +112,44 @@ class DBManager(object):
         self.close_mysql()
         return result
 
+    def check_if_bag_exists(self, bagid):
+        self.connect_to_mysql()
+        sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
+        adr = (bagid, )
+
+        self.mysql_cursor.execute(sql, adr)
+        query_result = self.mysql_cursor.fetchall()
+        self.close_mysql()
+        if len(query_result) == 0:
+            return False
+        else:
+            return True
+
+    def remove_all_data_by_id(self, bagid):
+        if self.check_if_bag_exists(bagid):
+            print("into delete")
+            self.connect_to_mysql()
+            sql = "DELETE FROM app_bag WHERE bagid = %s"
+            adr = (bagid, )
+            sql2 = "DELETE FROM app_association WHERE bagid = %s"
+            adr2 = (bagid, )
+            try:
+                self.mysql_cursor.execute('SET FOREIGN_KEY_CHECKS=0;')
+                self.mysql_cursor.execute(sql, adr)
+                self.mysql_cursor.execute(sql2, adr2)
+                self.mysql_db.commit()
+                self.mysql_cursor.execute('SET FOREIGN_KEY_CHECKS=1;')
+            except Exception as e:
+                self.mysql_db.rollback()
+                return False
+            finally:
+                self.close_mysql()
+            db_messages = self.mongo_db["messages"]
+            db_messages.delete_many({"bagid": bagid})
+            return True
+        else:
+            return False
+
     def get_frame_by_id_time(self, bagid, timestamp):
         result = "no data found"
         db_messages = self.mongo_db["messages"]
@@ -222,6 +260,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

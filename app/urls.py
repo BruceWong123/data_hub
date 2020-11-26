@@ -34,6 +34,14 @@ urlpatterns = [
     url(r'^api/bags/all/$',
         views.api.getAllBagID),
 
+    # check if bag exist
+    url(r'^api/exist/(?P<bagid>[0-9a-zA-Z_]+)/$',
+        views.api.checkBagExistByID),
+
+    # remove all data by bagid
+    url(r'^api/delete/(?P<bagid>[0-9a-zA-Z_]+)/$',
+        views.api.removeAllDataByID),
+
     # get all matching timestamps by bagid
     url(r'^api/bags/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getAllTimestampsByID),
