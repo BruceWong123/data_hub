@@ -78,12 +78,12 @@ class DBManager(object):
             return topic
 
     def _assemble_topic_with_version(self, topic, version):
-        if version != "":
+        if version != "" and version != "default_version":
             topic = topic + '_' + version
         return topic
 
     def _assemble_message_with_version(self, message, version):
-        if version != "":
+        if version != "" and version != "default_version":
             message = message + '_' + version
         return message
 
@@ -166,7 +166,7 @@ class DBManager(object):
     def get_message_by_id_time_topic_version(self, bagid, timestamp, topic, version):
         result = ""
         db_messages = self.mongo_db["messages"]
-        topic_field_name = self._assemble_topic_with_version(topic, version)
+        topic_field_name = self._assemble_topic_with_version("topic", version)
         message_field_name = self._assemble_message_with_version(
             "message", version)
         topic_to_find = self._translate_topic(topic)
@@ -175,7 +175,6 @@ class DBManager(object):
             {"bagid": bagid, "timestamp": timestamp, topic_field_name: topic_to_find})
         for x in query_result:
             result = x[message_field_name]
-            print(result)
         return result
 
     def get_range_message_by_id_topic(self, bagid, topic, start, end):
@@ -185,7 +184,7 @@ class DBManager(object):
         query_result = db_messages.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
         for i, x in enumerate(query_result):
-            result += x['message']
+            result += x['timestamp'] + "timestamp_and_message" + x['message']
             if i != query_result.count() - 1:
                 result += "deep_route"
         return result

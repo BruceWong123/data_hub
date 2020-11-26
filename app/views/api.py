@@ -51,13 +51,15 @@ def getFrameByIdTime(request, bagid, timestamp):
     if request.method == 'GET':
         return HttpResponse(db.get_frame_by_id_time(bagid, timestamp))
 
+# This will be directly used by C++ SYNC mode, so only return value
+
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getMessageByIdTimeTopicVersion(request, bagid, timestamp, topic, version):
     if request.method == 'GET':
         message = db.get_message_by_id_time_topic_version(
             bagid, timestamp, topic, version)
-        return JsonResponse({topic: message})
+        return HttpResponse(message)
 
 
 @ api_view(['GET', 'POST', 'DELETE'])
