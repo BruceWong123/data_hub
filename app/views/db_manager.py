@@ -116,11 +116,14 @@ class DBManager(object):
         self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
         adr = (bagid, )
-
         self.mysql_cursor.execute(sql, adr)
-        query_result = self.mysql_cursor.fetchall()
+        mysql_query_result = self.mysql_cursor.fetchall()
         self.close_mysql()
-        if len(query_result) == 0:
+
+        db_messages = self.mongo_db["messages"]
+        mongo_query_result = db_messages.find({"bagid": bagid, })
+
+        if len(mysql_query_result) == 0 and len(mongo_query_result) == 0:
             return False
         else:
             return True
@@ -259,7 +262,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
