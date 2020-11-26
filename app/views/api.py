@@ -35,7 +35,7 @@ def checkBagExistByID(request, bagid):
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def removeAllDataByID(request, bagid):
-    if request.method == 'GET':
+    if request.method == 'DELETE':
         result = "done" if db.remove_all_data_by_id(bagid) else "failed"
         return HttpResponse(result)
 
