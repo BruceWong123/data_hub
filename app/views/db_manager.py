@@ -109,7 +109,7 @@ class DBManager(object):
         for row in query_result:
             result += " "
             result += str(row[0])
-        self.close_mysql()
+        # self.close_mysql()
         return result
 
     def check_if_bag_exists(self, bagid):
@@ -118,7 +118,7 @@ class DBManager(object):
         adr = (bagid, )
         self.mysql_cursor.execute(sql, adr)
         mysql_query_result = self.mysql_cursor.fetchall()
-        self.close_mysql()
+        # self.close_mysql()
 
         db_messages = self.mongo_db["messages"]
         mongo_query_result = db_messages.find({"bagid": bagid, })
@@ -146,7 +146,8 @@ class DBManager(object):
                 self.mysql_db.rollback()
                 return False
             finally:
-                self.close_mysql()
+                pass
+                # self.close_mysql()
             db_messages = self.mongo_db["messages"]
             db_messages.delete_many({"bagid": bagid})
             return True
