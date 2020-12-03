@@ -89,7 +89,7 @@ class DBManager(object):
 
     def get_all_timestamps_by_id(self, bagid):
         result = ""
-        self.connect_to_mysql()
+        # self.connect_to_mysql()
         sql = "SELECT association FROM app_association WHERE bagid = %s"
         adr = (bagid, )
         self.mysql_cursor.execute(sql, adr)
@@ -97,7 +97,7 @@ class DBManager(object):
         for row in query_result:
             result += " "
             result += str(row[0])
-        self.close_mysql()
+        # self.close_mysql()
         return result
 
     def get_all_bag_id(self):
