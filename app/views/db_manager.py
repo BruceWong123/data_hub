@@ -102,23 +102,23 @@ class DBManager(object):
 
     def get_all_bag_id(self):
         result = ""
-        self.connect_to_mysql()
+        # self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag"
         self.mysql_cursor.execute(sql)
         query_result = self.mysql_cursor.fetchall()
         for row in query_result:
             result += " "
             result += str(row[0])
-        self.close_mysql()
+        # self.close_mysql()
         return result
 
     def check_if_bag_exists(self, bagid):
-        self.connect_to_mysql()
+        # self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
         adr = (bagid, )
         self.mysql_cursor.execute(sql, adr)
         mysql_query_result = self.mysql_cursor.fetchall()
-        self.close_mysql()
+        # self.close_mysql()
 
         db_messages = self.mongo_db["messages"]
         mongo_query_result = db_messages.find({"bagid": bagid, })
@@ -131,7 +131,7 @@ class DBManager(object):
     def remove_all_data_by_id(self, bagid):
         if self.check_if_bag_exists(bagid):
             print("into delete")
-            self.connect_to_mysql()
+           # self.connect_to_mysql()
             sql = "DELETE FROM app_bag WHERE bagid = %s"
             adr = (bagid, )
             sql2 = "DELETE FROM app_association WHERE bagid = %s"
@@ -146,7 +146,8 @@ class DBManager(object):
                 self.mysql_db.rollback()
                 return False
             finally:
-                self.close_mysql()
+                pass
+                # self.close_mysql()
             db_messages = self.mongo_db["messages"]
             db_messages.delete_many({"bagid": bagid})
             return True
