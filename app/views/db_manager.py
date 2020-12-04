@@ -9,6 +9,7 @@ from pymongo import MongoClient
 import six.moves.urllib as urllib
 import mysql.connector as mysql
 from datetime import datetime
+import threading
 
 
 class DBManager(object):
@@ -18,6 +19,7 @@ class DBManager(object):
             os.path.dirname(__file__)) + "/config.ini")
         self.connect_to_mongodb()
         self.connect_to_mysql()
+        self.lock = threading.RLock()
 
     def connect_to_mongodb(self):
         host = self.config.get("MongoDB", "host")
@@ -88,8 +90,9 @@ class DBManager(object):
         return message
 
     def get_all_timestamps_by_id(self, bagid):
+        self.lock.acquire()
         result = ""
-        # self.connect_to_mysql()
+        self.connect_to_mysql()
         sql = "SELECT association FROM app_association WHERE bagid = %s"
         adr = (bagid, )
         self.mysql_cursor.execute(sql, adr)
@@ -97,28 +100,31 @@ class DBManager(object):
         for row in query_result:
             result += " "
             result += str(row[0])
-        # self.close_mysql()
+        self.close_mysql()
+        self.lock.release()
         return result
 
     def get_all_bag_id(self):
+        self.lock.acquire()
         result = ""
-        # self.connect_to_mysql()
+        self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag"
         self.mysql_cursor.execute(sql)
         query_result = self.mysql_cursor.fetchall()
         for row in query_result:
             result += " "
             result += str(row[0])
-        # self.close_mysql()
+        self.close_mysql()
+        self.lock.release()
         return result
 
     def check_if_bag_exists(self, bagid):
-        # self.connect_to_mysql()
+        self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
         adr = (bagid, )
         self.mysql_cursor.execute(sql, adr)
         mysql_query_result = self.mysql_cursor.fetchall()
-        # self.close_mysql()
+        self.close_mysql()
 
         db_messages = self.mongo_db["messages"]
         mongo_query_result = db_messages.find({"bagid": bagid, })
@@ -131,7 +137,8 @@ class DBManager(object):
     def remove_all_data_by_id(self, bagid):
         if self.check_if_bag_exists(bagid):
             print("into delete")
-           # self.connect_to_mysql()
+            self.lock
+            self.connect_to_mysql()
             sql = "DELETE FROM app_bag WHERE bagid = %s"
             adr = (bagid, )
             sql2 = "DELETE FROM app_association WHERE bagid = %s"
@@ -146,8 +153,7 @@ class DBManager(object):
                 self.mysql_db.rollback()
                 return False
             finally:
-                pass
-                # self.close_mysql()
+                self.close_mysql()
             db_messages = self.mongo_db["messages"]
             db_messages.delete_many({"bagid": bagid})
             return True
