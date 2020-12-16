@@ -336,13 +336,9 @@ class DBManager(object):
         return result
 
     def get_scene_result_aggregation(self, filters, aggregation_methods):
-        scene_result_data = self.mongo_db["scene_results"]
+        scene_result_data = self.mongo_db["frame_results"]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
-        print(11111111111)
-        cursor = self.scene_result_data.aggregate(pipeline)
-        print(22222222222)
+        cursor = scene_result_data.aggregate(pipeline)
         res = list(cursor)
-        print(len(res))
-        pprint.pprint(res)
         return res
