@@ -135,4 +135,4 @@ def getSceneResultAggregation(request):
     if request.method == 'GET':
         if request.data is not None:
             data_dict = request.data
-            return JsonResponse(db.get_scene_result_aggregation(data_dict))
+            return JsonResponse(data_dict)
