@@ -28,10 +28,10 @@ class DBManager(object):
         username = urllib.parse.quote_plus(self.config.get("MongoDB", "user"))
         password = urllib.parse.quote_plus(
             self.config.get("MongoDB", "password"))
-
+        authSource = "datahub"
         self.my_mongo_client = MongoClient(
-            "mongodb://%s:%s@%s:%s/%s" % (username,
-                                          password, host, port, database)
+            "mongodb://%s:%s@%s:%s/%s" % ('deep',
+                                          'route', host, port, authSource)
         )
         self.mongo_db = self.my_mongo_client[database]
         print(
@@ -119,12 +119,14 @@ class DBManager(object):
         return result
 
     def check_if_bag_exists(self, bagid):
+        self.lock.acquire()
         self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
         adr = (bagid, )
         self.mysql_cursor.execute(sql, adr)
         mysql_query_result = self.mysql_cursor.fetchall()
         self.close_mysql()
+        self.lock.release()
 
         db_messages = self.mongo_db["messages"]
         mongo_query_result = db_messages.find({"bagid": bagid, })
@@ -137,7 +139,7 @@ class DBManager(object):
     def remove_all_data_by_id(self, bagid):
         if self.check_if_bag_exists(bagid):
             print("into delete")
-            self.lock
+            self.lock.acquire()
             self.connect_to_mysql()
             sql = "DELETE FROM app_bag WHERE bagid = %s"
             adr = (bagid, )
@@ -154,6 +156,7 @@ class DBManager(object):
                 return False
             finally:
                 self.close_mysql()
+                self.lock.release()
             db_messages = self.mongo_db["messages"]
             db_messages.delete_many({"bagid": bagid})
             return True
@@ -270,6 +273,7 @@ class DBManager(object):
 
 # result related
 
+
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
         query_result = db_task_results.find_one(
@@ -330,3 +334,15 @@ class DBManager(object):
         if query_result is not None:
             result = query_result.get('debug_info')
         return result
+
+    def get_scene_result_aggregation(self, filter_data):
+        scene_result_data = self.mongo_db["scene_results"]
+        filter_field_name = 'filters'
+        aggregation_field_name = 'aggregation_methods'
+        filters = filter_data[filter_field_name]
+        aggregation_methods = filter_data[aggregation_field_name]
+        pipeline = [{"$match": filters},
+                    {"$project": aggregation_methods}]
+        cursor = self.scene_result_data.aggregate(pipeline)
+        res = list(cursor)
+        pprint.pprint(res)

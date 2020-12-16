@@ -22,6 +22,11 @@ urlpatterns = [
         views.api.uploadTaskResultByIDVersionMode),
 
 
+
+    # get data from frame result
+    url(r'^api/results/scene_result_aggregation/$',
+        views.api.getSceneResultAggregation),
+
     # get data from frame result
     url(r'^api/results/(?P<taskid>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
         views.api.getTaskFrameResultByIDVersionMode),

@@ -126,3 +126,13 @@ def getTaskFrameResultByIDVersionMode(request, taskid, grading_version, timestam
         result_str = db.get_task_frame_result_by_id_version_time(
             taskid, grading_version, timestamp)
         return JsonResponse({'debug_info': result_str})
+
+
+# result related
+
+@ api_view(['GET'])
+def getSceneResultAggregation(request):
+    if request.method == 'GET':
+        if request.data is not None:
+            data_dict = request.data.dict()
+            return JsonResponse(db.get_scene_result_aggregation(data_dict))
