@@ -134,5 +134,5 @@ def getTaskFrameResultByIDVersionMode(request, taskid, grading_version, timestam
 def getSceneResultAggregation(request):
     if request.method == 'GET':
         if request.data is not None:
-            data_dict = request.data.dict()
+            data_dict = request.data
             return JsonResponse(db.get_scene_result_aggregation(data_dict))
