@@ -335,14 +335,14 @@ class DBManager(object):
             result = query_result.get('debug_info')
         return result
 
-    def get_scene_result_aggregation(self, filter_data):
+    def get_scene_result_aggregation(self, filters, aggregation_methods):
         scene_result_data = self.mongo_db["scene_results"]
-        filter_field_name = 'filters'
-        aggregation_field_name = 'aggregation_methods'
-        filters = filter_data[filter_field_name]
-        aggregation_methods = filter_data[aggregation_field_name]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
+        print(11111111111)
         cursor = self.scene_result_data.aggregate(pipeline)
+        print(22222222222)
         res = list(cursor)
+        print(len(res))
         pprint.pprint(res)
+        return res

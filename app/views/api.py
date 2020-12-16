@@ -134,5 +134,7 @@ def getTaskFrameResultByIDVersionMode(request, taskid, grading_version, timestam
 def getSceneResultAggregation(request):
     if request.method == 'GET':
         if request.data is not None:
-            data_dict = request.data
-            return JsonResponse(data_dict)
+            filters = eval(request.GET.get("filters", ""))
+            aggregation_methods = eval(
+                request.GET.get("aggregation_methods", ""))
+            return JsonResponse(db.get_scene_result_aggregation(filters, aggregation_methods))
