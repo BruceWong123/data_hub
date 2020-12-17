@@ -140,3 +140,15 @@ def getSceneResultAggregation(request):
             list_of_json_res = db.get_scene_result_aggregation(
                 filters, aggregation_methods)
             return JsonResponse({"res": str(list_of_json_res)})
+
+
+@ api_view(['GET'])
+def getGradingResultAggregation(request):
+    if request.method == 'GET':
+        if request.data is not None:
+            filters = eval(request.GET.get("filters", ""))
+            aggregation_methods = eval(
+                request.GET.get("aggregation_methods", ""))
+            list_of_json_res = db.get_grading_result_aggregation(
+                filters, aggregation_methods)
+            return JsonResponse({"res": str(list_of_json_res)})

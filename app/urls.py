@@ -23,9 +23,13 @@ urlpatterns = [
 
 
 
-    # get data from frame result
+    # get data from scene result
     url(r'^api/results/scene_result_aggregation/$',
         views.api.getSceneResultAggregation),
+
+    # get data from grading result
+    url(r'^api/results/grading_result_aggregation/$',
+        views.api.getGradingResultAggregation),
 
     # get data from frame result
     url(r'^api/results/(?P<taskid>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',

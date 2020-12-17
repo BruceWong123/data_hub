@@ -3,6 +3,7 @@ import sys
 import time
 import base64
 import zlib
+import copy
 import pprint
 import configparser
 from pymongo import MongoClient
@@ -336,7 +337,6 @@ class DBManager(object):
         return result
 
     def get_scene_result_aggregation(self, filters, aggregation_methods):
-        print("yesdddddddddd 11111")
         scene_result_data = self.mongo_db["frame_results"]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
@@ -345,6 +345,16 @@ class DBManager(object):
         scene_aggregation = self.mongo_db["scenes_aggregation_results"]
         if len(res) > 0:
             scene_aggregation.delete_many({})
-            for result in res:
+            for result in copy.deepcopy(res):
                 scene_aggregation.insert_one(result)
+        return res
+
+    def get_grading_result_aggregation(self, filters, aggregation_methods):
+        print("fdafasdfasfd")
+        scene_aggregation_result = self.mongo_db["scenes_aggregation_results"]
+        pipeline = [{"$match": filters},
+                    {"$project": aggregation_methods}]
+        cursor = scene_aggregation_result.aggregate(pipeline)
+        res = list(cursor)
+        print("len ", len(res))
         return res
