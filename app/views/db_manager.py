@@ -3,6 +3,7 @@ import sys
 import time
 import base64
 import zlib
+import copy
 import pprint
 import configparser
 from pymongo import MongoClient
@@ -339,10 +340,9 @@ class DBManager(object):
         scene_result_data = self.mongo_db["frame_results"]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
-        pprint.pprint(aggregation_methods)
         cursor = scene_result_data.aggregate(pipeline)
         res = list(cursor)
         scene_aggregation = self.mongo_db["scenes_aggregation_results"]
-        for result in res:
+        for result in copy.deepcopy(res):
             scene_aggregation.insert_one(result)
         return res
