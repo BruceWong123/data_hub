@@ -336,12 +336,15 @@ class DBManager(object):
         return result
 
     def get_scene_result_aggregation(self, filters, aggregation_methods):
+        print("yesdddddddddd 11111")
         scene_result_data = self.mongo_db["frame_results"]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
         cursor = scene_result_data.aggregate(pipeline)
         res = list(cursor)
         scene_aggregation = self.mongo_db["scenes_aggregation_results"]
-        for result in res:
-            scene_aggregation.insert_one(result)
+        if len(res) > 0:
+            scene_aggregation.delete_many({})
+            for result in res:
+                scene_aggregation.insert_one(result)
         return res
