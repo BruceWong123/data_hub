@@ -341,4 +341,7 @@ class DBManager(object):
                     {"$project": full_aggregation_methods}]
         cursor = scene_result_data.aggregate(pipeline)
         res = list(cursor)
+        scene_aggregation = self.mongo_db["scenes_aggregation_results"]
+        for result in res:
+            scene_aggregation.insert_one(result)
         return res
