@@ -21,7 +21,9 @@ urlpatterns = [
     url(r'^api/upload/(?P<taskid>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<play_mode>[a-zA-Z_]+)/$',
         views.api.uploadTaskResultByIDVersionMode),
 
-
+    # upload row into scene result
+    url(r'^api/upload/scene_result_one/$',
+        views.api.uploadSceneResultOne),
 
     # get data from scene result
     url(r'^api/results/scene_result_aggregation/$',
@@ -82,8 +84,4 @@ urlpatterns = [
 
     url(r'^(?!/api).*$', views.views.pages, name='pages'),
 
-
-    # upload row into scene result
-    url(r'^api/upload/scene_result_one/$',
-        views.api.uploadSceneResultOne),
 ]

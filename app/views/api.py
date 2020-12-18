@@ -149,8 +149,10 @@ def getGradingResultAggregation(request):
             filters = eval(request.GET.get("filters", ""))
             aggregation_methods = eval(
                 request.GET.get("aggregation_methods", ""))
+            projects = eval(
+                request.GET.get("projects", ""))
             list_of_json_res = db.get_grading_result_aggregation(
-                filters, aggregation_methods)
+                filters, aggregation_methods, projects)
             return JsonResponse({"res": str(list_of_json_res)})
 
 

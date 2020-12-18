@@ -1,4 +1,5 @@
 import os
+import ast
 import sys
 import time
 import base64
@@ -348,21 +349,23 @@ class DBManager(object):
                 scene_aggregation.insert_one(result)
         return res
 
-    def get_grading_result_aggregation(self, filters, aggregation_methods):
+    def get_grading_result_aggregation(self, filters, aggregation_methods, projects):
         scene_aggregation_result = self.mongo_db["scenes_aggregation_results"]
         pipeline = [{"$match": filters},
                     {"$group": aggregation_methods}]
-        print(pipeline)
+        if len(projects) > 0:
+            pipeline.append({"$project": projects})
+
         cursor = scene_aggregation_result.aggregate(pipeline)
         res = list(cursor)
         return res
 
     def upload_scene_result_one(self, data_dict):
         db_frame_results = self.mongo_db["frame_results"]
-        scene_data_dict = eval(data_dict["scene_result_one"])
-
+        scene_data_dict = ast.literal_eval(data_dict["scene_result_one"])
         query_result = db_frame_results.find_one({"play_mode": scene_data_dict["play_mode"],  "grading_config": scene_data_dict["grading_config"], "planning_version": scene_data_dict[
                                                  "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
 
         if query_result is None:
+            print("insert one new scene results.")
             db_frame_results.insert_one(scene_data_dict)
