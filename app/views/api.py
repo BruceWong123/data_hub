@@ -54,6 +54,14 @@ def getFrameByIdTime(request, bagid, timestamp):
 # This will be directly used by C++ SYNC mode, so only return value
 
 
+@ api_view(['POST'])
+def uploadSceneResultOne(request):
+    if request.method == 'POST':
+        if request.data is not None:
+            data_dict = request.data.dict()
+            db.upload_scene_result_one(data_dict)
+
+
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getMessageByIdTimeTopicVersion(request, bagid, timestamp, topic, version):
     if request.method == 'GET':
@@ -152,11 +160,3 @@ def getGradingResultAggregation(request):
             list_of_json_res = db.get_grading_result_aggregation(
                 filters, aggregation_methods)
             return JsonResponse({"res": str(list_of_json_res)})
-
-
-@ api_view(['POST'])
-def uploadSceneResultOne(request):
-    if request.method == 'POST':
-        if request.data is not None:
-            data_dict = request.data.dict()
-            db.upload_scene_result_one(data_dict)
