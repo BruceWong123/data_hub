@@ -12,6 +12,8 @@ urlpatterns = [
     path('', views.views.index, name='home'),
     url('uploadFile', views.views.uploadFile),
 
+    # upload row into scene result
+    url(r'^api/upload/scene_result_one/$', views.api.uploadSceneResultOne),
 
     # upload column into frame result
     url(r'^api/upload/(?P<taskid>[0-9a-zA-Z_]+)/(?P<grading_version>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
@@ -81,6 +83,9 @@ urlpatterns = [
     # get data for taskinfo
     url(r'^api/tasks/(?P<taskid>[0-9a-zA-Z_]+)/$',
         views.api.getTaskInfoById),
+
+
+
 
     url(r'^(?!/api).*$', views.views.pages, name='pages'),
 
