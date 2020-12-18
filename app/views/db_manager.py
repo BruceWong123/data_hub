@@ -274,7 +274,6 @@ class DBManager(object):
 
 # result related
 
-
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
         query_result = db_task_results.find_one(
@@ -350,7 +349,6 @@ class DBManager(object):
         return res
 
     def get_grading_result_aggregation(self, filters, aggregation_methods):
-        print("fdafasdfasfd")
         scene_aggregation_result = self.mongo_db["scenes_aggregation_results"]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
@@ -358,3 +356,13 @@ class DBManager(object):
         res = list(cursor)
         print("len ", len(res))
         return res
+
+    def upload_scene_result_one(self, data_dict):
+        db_frame_results = self.mongo_db["frame_results"]
+        scene_data_dict = eval(data_dict["scene_result_one"])
+
+        query_result = db_frame_results.find_one({"play_mode": scene_data_dict["play_mode"],  "grading_config": scene_data_dict["grading_config"], "planning_version": scene_data_dict[
+                                                 "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
+
+        if query_result is None:
+            db_frame_results.insert_one(scene_data_dict)

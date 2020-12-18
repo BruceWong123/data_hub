@@ -81,4 +81,9 @@ urlpatterns = [
         views.api.getTaskInfoById),
 
     url(r'^(?!/api).*$', views.views.pages, name='pages'),
+
+
+    # upload row into scene result
+    url(r'^api/upload/scene_result_one/$',
+        views.api.uploadSceneResultOne),
 ]

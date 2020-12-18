@@ -152,3 +152,11 @@ def getGradingResultAggregation(request):
             list_of_json_res = db.get_grading_result_aggregation(
                 filters, aggregation_methods)
             return JsonResponse({"res": str(list_of_json_res)})
+
+
+@ api_view(['POST'])
+def uploadSceneResultOne(request):
+    if request.method == 'POST':
+        if request.data is not None:
+            data_dict = request.data.dict()
+            db.upload_scene_result_one(data_dict)
