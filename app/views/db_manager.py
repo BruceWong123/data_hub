@@ -351,10 +351,10 @@ class DBManager(object):
     def get_grading_result_aggregation(self, filters, aggregation_methods):
         scene_aggregation_result = self.mongo_db["scenes_aggregation_results"]
         pipeline = [{"$match": filters},
-                    {"$project": aggregation_methods}]
+                    {"$group": aggregation_methods}]
+        print(pipeline)
         cursor = scene_aggregation_result.aggregate(pipeline)
         res = list(cursor)
-        print("len ", len(res))
         return res
 
     def upload_scene_result_one(self, data_dict):
