@@ -336,10 +336,13 @@ class DBManager(object):
             result = query_result.get('debug_info')
         return result
 
-    def get_scene_result_aggregation(self, filters, aggregation_methods):
+    def get_scene_result_aggregation(self, filters, sets, aggregation_methods):
         scene_result_data = self.mongo_db["frame_results"]
         pipeline = [{"$match": filters},
                     {"$project": aggregation_methods}]
+        if len(sets) > 0:
+            pipeline.insert(1, {"$addFields": sets})
+
         cursor = scene_result_data.aggregate(pipeline)
         res = list(cursor)
         scene_aggregation = self.mongo_db["scenes_aggregation_results"]
@@ -354,7 +357,7 @@ class DBManager(object):
         pipeline = [{"$match": filters},
                     {"$group": aggregation_methods}]
         if len(projects) > 0:
-            pipeline.append({"$project": projects})
+            pipeline.append({"$addFields": projects})
 
         cursor = scene_aggregation_result.aggregate(pipeline)
         res = list(cursor)
