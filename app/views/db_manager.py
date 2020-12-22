@@ -357,7 +357,7 @@ class DBManager(object):
         pipeline = [{"$match": filters},
                     {"$group": aggregation_methods}]
         if len(projects) > 0:
-            pipeline.append({"$addFields": projects})
+            pipeline.append({"$project": projects})
 
         cursor = scene_aggregation_result.aggregate(pipeline)
         res = list(cursor)
