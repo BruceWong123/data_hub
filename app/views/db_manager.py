@@ -366,6 +366,7 @@ class DBManager(object):
     def upload_scene_result_one(self, data_dict):
         db_frame_results = self.mongo_db["frame_results"]
         scene_data_dict = ast.literal_eval(data_dict["scene_result_one"])
+        over_write = ast.literal_eval(data_dict["over_write"])
         query_result = db_frame_results.find_one({"play_mode": scene_data_dict["play_mode"],  "grading_config": scene_data_dict["grading_config"], "planning_version": scene_data_dict[
                                                  "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
 
