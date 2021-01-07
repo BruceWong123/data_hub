@@ -369,7 +369,7 @@ class DBManager(object):
         over_write = ast.literal_eval(data_dict["over_write"])
         query_result = db_frame_results.find_one({"play_mode": scene_data_dict["play_mode"],  "grading_config": scene_data_dict["grading_config"], "planning_version": scene_data_dict[
                                                  "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
-
-        if query_result is None:
-            print("insert one new scene results.")
+        if query_result is not None and over_write:
+            db_frame_results.delete_one(query_result)
+        if query_result is None or over_write:
             db_frame_results.insert_one(scene_data_dict)
