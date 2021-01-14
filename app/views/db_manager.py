@@ -70,7 +70,7 @@ class DBManager(object):
     def _translate_topic(self, topic):
         if topic == 'perception':
             return '/perception/objects'
-        elif topic == 'carstate':
+        elif topic == 'vs':
             return '/canbus/car_state'
         elif topic == 'signals_response':
             return '/perception/signals_response'
@@ -78,6 +78,8 @@ class DBManager(object):
             return '/planner/context'
         elif topic == 'debug_info':
             return '/planner/debug_info'
+        elif topic == 'routing_request':
+            return '/planner/routing_response'
         else:
             return topic
 
