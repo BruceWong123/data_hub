@@ -130,10 +130,9 @@ class DBManager(object):
         finally:
             self.close_mysql()
             self.lock.release()
-        logger.info("leave lock at:")
-        localtime = time.asctime(time.localtime(time.time()))
-        logger.info(localtime)
-        self.lock.release()
+            logger.info("leave lock at:")
+            localtime = time.asctime(time.localtime(time.time()))
+            logger.info(localtime)
         return result
 
     def check_if_bag_exists(self, bagid):
