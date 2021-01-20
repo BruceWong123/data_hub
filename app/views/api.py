@@ -14,7 +14,7 @@ from ..serializers import *
 from app.views.db_manager import DBManager
 import json
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 db = DBManager()
@@ -23,6 +23,9 @@ db = DBManager()
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getAllBagID(request):
     if request.method == 'GET':
+        logger.info("########### get all bag id ##################")
+        session_key = request.session.session_key
+        logger.info("session id: ", session_key)
         return HttpResponse(db.get_all_bag_id())
 
 

@@ -12,6 +12,8 @@ import six.moves.urllib as urllib
 import mysql.connector as mysql
 from datetime import datetime
 import threading
+import logging
+logger = logging.getLogger('django')
 
 
 class DBManager(object):
@@ -107,7 +109,11 @@ class DBManager(object):
         return result
 
     def get_all_bag_id(self):
+        logger.info(" try to get lock")
         self.lock.acquire()
+        logger.info("into lock at:")
+        localtime = time.asctime(time.localtime(time.time()))
+        logger.info(localtime)
         result = ""
         self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag"
@@ -117,6 +123,9 @@ class DBManager(object):
             result += " "
             result += str(row[0])
         self.close_mysql()
+        logger.info("leave lock at:")
+        localtime = time.asctime(time.localtime(time.time()))
+        logger.info(localtime)
         self.lock.release()
         return result
 
@@ -274,6 +283,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
