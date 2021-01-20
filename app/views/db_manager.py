@@ -117,14 +117,19 @@ class DBManager(object):
         localtime = time.asctime(time.localtime(time.time()))
         logger.info(localtime)
         result = ""
-        self.connect_to_mysql()
-        sql = "SELECT bagid FROM app_bag"
-        self.mysql_cursor.execute(sql)
-        query_result = self.mysql_cursor.fetchall()
-        for row in query_result:
-            result += " "
-            result += str(row[0])
-        self.close_mysql()
+        try:
+            self.connect_to_mysql()
+            sql = "SELECT bagid FROM app_bag"
+            self.mysql_cursor.execute(sql)
+            query_result = self.mysql_cursor.fetchall()
+            for row in query_result:
+                result += " "
+                result += str(row[0])
+        except Exception as e:
+            logger.info(e)
+        finally:
+            self.close_mysql()
+            self.lock.release()
         logger.info("leave lock at:")
         localtime = time.asctime(time.localtime(time.time()))
         logger.info(localtime)
@@ -285,7 +290,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
