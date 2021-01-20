@@ -25,7 +25,8 @@ def getAllBagID(request):
     if request.method == 'GET':
         logger.info("########### get all bag id ##################")
         session_key = request.session.session_key
-        logger.info("session id: ", session_key)
+        logger.info("session id: ")
+        logger.info(session_key)
         return HttpResponse(db.get_all_bag_id())
 
 
