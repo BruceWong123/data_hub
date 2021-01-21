@@ -117,14 +117,21 @@ class DBManager(object):
         localtime = time.asctime(time.localtime(time.time()))
         logger.info(localtime)
         result = ""
+        db_messages = self.mongo_db["messages"]
         try:
             self.connect_to_mysql()
             sql = "SELECT bagid FROM app_bag"
             self.mysql_cursor.execute(sql)
             query_result = self.mysql_cursor.fetchall()
             for row in query_result:
-                result += " "
-                result += str(row[0])
+                logger.info(str(row[0]))
+                mongo_query_result = db_messages.find({"bagid": str(row[0])})
+                logger.info("len")
+                logger.info(mongo_query_result.count())
+
+                if mongo_query_result.count() > 0:
+                    result += " "
+                    result += str(row[0])
         except Exception as e:
             logger.info(e)
         finally:
@@ -133,7 +140,6 @@ class DBManager(object):
         logger.info("leave lock at:")
         localtime = time.asctime(time.localtime(time.time()))
         logger.info(localtime)
-        self.lock.release()
         return result
 
     def check_if_bag_exists(self, bagid):
@@ -149,14 +155,14 @@ class DBManager(object):
         db_messages = self.mongo_db["messages"]
         mongo_query_result = db_messages.find({"bagid": bagid, })
 
-        if len(mysql_query_result) == 0 and len(mongo_query_result) == 0:
+        if len(mysql_query_result) == 0 and mongo_query_result.count() == 0:
             return False
         else:
             return True
 
     def remove_all_data_by_id(self, bagid):
         if self.check_if_bag_exists(bagid):
-            print("into delete")
+            logger.info("into delete")
             self.lock.acquire()
             self.connect_to_mysql()
             sql = "DELETE FROM app_bag WHERE bagid = %s"
@@ -171,12 +177,14 @@ class DBManager(object):
                 self.mysql_cursor.execute('SET FOREIGN_KEY_CHECKS=1;')
             except Exception as e:
                 self.mysql_db.rollback()
+                logger.info("exception")
                 return False
             finally:
                 self.close_mysql()
                 self.lock.release()
             db_messages = self.mongo_db["messages"]
             db_messages.delete_many({"bagid": bagid})
+            logger.info("done")
             return True
         else:
             return False
@@ -384,7 +392,7 @@ class DBManager(object):
         scene_data_dict = ast.literal_eval(data_dict["scene_result_one"])
         over_write = ast.literal_eval(data_dict["over_write"])
         query_result = db_frame_results.find_one({"play_mode": scene_data_dict["play_mode"],  "grading_config": scene_data_dict["grading_config"], "planning_version": scene_data_dict[
-                                                 "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
+            "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
         if query_result is not None and over_write:
             db_frame_results.delete_one(query_result)
         if query_result is None or over_write:
