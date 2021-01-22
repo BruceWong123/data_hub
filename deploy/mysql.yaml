@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-conf
+data:
+  mysql.conf: |
+        dbpath=/data/middleware-data/mysql
+        logpath=/data/middleware-data/mysql/mysql.log
+        pidfilepath=/data/middleware-data/mysql/master.pid
+        directoryperdb=true
+        logappend=true
+        bind_ip=0.0.0.0
+        port=3306
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  serviceName: mysql
+  selector:
+    matchLabels:
+      name: mysql
+  template:
+    metadata:
+      labels:
+        name: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.6
+        env:
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "1"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3306
+          name: mysql
+          protocol: TCP
+        volumeMounts:
+        - name: mysql-config
+          mountPath: /data/middleware-data/mysql/conf/
+        - name: mysql-data
+          mountPath: /data/middleware-data/mysql/
+      volumes:
+      - name: mysql-config
+        configMap:
+          name: mysql-conf
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mysql
+  name: mysql-secondary
+spec:
+  type: NodePort
+  ports:
+  - name: mysql
+    port: 3306
+    targetPort: 3306
+    nodePort: 30009
+  selector:
+    name: mysql
