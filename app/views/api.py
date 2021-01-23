@@ -51,6 +51,7 @@ def removeAllDataByID(request, bagid):
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getAllTimestampsByID(request, bagid):
     if request.method == 'GET':
+        logger.info("into get association")
         return HttpResponse(db.get_all_timestamps_by_id(bagid))
 
 
@@ -68,6 +69,7 @@ def uploadSceneResultOne(request):
         if request.data is not None:
             data_dict = request.data.dict()
             db.upload_scene_result_one(data_dict)
+        return HttpResponse("done")
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -85,6 +87,7 @@ def uploadMessageByIdTimeTopicVersion(request, bagid, timestamp, topic, version)
             data_dict = request.data.dict()
             db.upload_message_by_id_time_topic_version(
                 data_dict, bagid, timestamp, topic, version)
+        return HttpResponse("done")
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -100,6 +103,7 @@ def uploadTaskInfo(request, taskid, play_mode, scene_id, subscene_id, planning_v
     if request.method == 'POST':
         db.upload_task_info(
             taskid, play_mode, scene_id, subscene_id, planning_version, perception_version)
+        return HttpResponse("done")
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -117,6 +121,7 @@ def uploadTaskResultByIDVersionMode(request, taskid, grading_version, play_mode)
             data_dict = request.data.dict()
             db.upload_task_result_by_id_version_mode(
                 data_dict, taskid, grading_version, play_mode)
+        return HttpResponse("done")
 
 
 @ api_view(['POST'])
@@ -126,6 +131,7 @@ def uploadTaskFrameResultByIDVersionTime(request, taskid, grading_version, times
             data_dict = request.data.dict()
             db.upload_task_frame_result_by_id_version_time(
                 data_dict, taskid, grading_version, timestamp)
+        return HttpResponse("done")
 
 
 @ api_view(['GET'])
