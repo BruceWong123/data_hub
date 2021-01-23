@@ -123,15 +123,11 @@ class DBManager(object):
             sql = "SELECT bagid FROM app_bag"
             self.mysql_cursor.execute(sql)
             query_result = self.mysql_cursor.fetchall()
+            logger.info("mysql bags number: ")
+            logger.info(len(query_result))
             for row in query_result:
-                logger.info(str(row[0]))
-                mongo_query_result = db_messages.find({"bagid": str(row[0])})
-                logger.info("len")
-                logger.info(mongo_query_result.count())
-
-                if mongo_query_result.count() > 0:
-                    result += " "
-                    result += str(row[0])
+                result += " "
+                result += str(row[0])
         except Exception as e:
             logger.info(e)
         finally:
@@ -152,10 +148,10 @@ class DBManager(object):
         self.close_mysql()
         self.lock.release()
 
-        db_messages = self.mongo_db["messages"]
-        mongo_query_result = db_messages.find({"bagid": bagid, })
+        # db_messages = self.mongo_db["messages"]
+        # mongo_query_result = db_messages.find({"bagid": bagid, })
 
-        if len(mysql_query_result) == 0 and mongo_query_result.count() == 0:
+        if len(mysql_query_result) == 0:
             return False
         else:
             return True
@@ -298,6 +294,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
