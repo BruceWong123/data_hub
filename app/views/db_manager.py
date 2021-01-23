@@ -96,7 +96,9 @@ class DBManager(object):
         return message
 
     def get_all_timestamps_by_id(self, bagid):
+        logger.info("try to get lock for association")
         self.lock.acquire()
+        logger.info("got into lock")
         result = ""
         self.connect_to_mysql()
         sql = "SELECT association FROM app_association WHERE bagid = %s"
@@ -106,8 +108,11 @@ class DBManager(object):
         for row in query_result:
             result += " "
             result += str(row[0])
+        logger.info("done mysql ")
         self.close_mysql()
         self.lock.release()
+
+        logger.info("release lock")
         return result
 
     def get_all_bag_id(self):
