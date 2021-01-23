@@ -222,15 +222,18 @@ class DBManager(object):
         return result
 
     def get_range_message_by_id_topic(self, bagid, topic, start, end):
+        logger.info("get message by id time topic start end..........")
         result = ""
         topic = self._translate_topic(topic)
         db_messages = self.mongo_db["messages"]
+        logger.info("send out query to mongo ..........")
         query_result = db_messages.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
         for i, x in enumerate(query_result):
             result += x['timestamp'] + "timestamp_and_message" + x['message']
             if i != query_result.count() - 1:
                 result += "deep_route"
+        logger.info("get back from mongo and return..........")
         return result
 
     def upload_message_by_id_time_topic_version(self, topic_message_pair, bagid, timestamp, topic, version):
