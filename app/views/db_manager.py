@@ -105,14 +105,14 @@ class DBManager(object):
         return message
 
     def get_all_timestamps_by_id(self, bagid):
-        logger.info("try to get lock for association")
         bag_association = bagid + "_association"
         redis_result = self.redis_cli.get(bag_association)
         if redis_result is not None:
             logger.info("found in redis")
             return redis_result
+        logger.info("try to get lock for association")
         self.lock.acquire()
-        logger.info("got into lock")
+        logger.info("got into association lock")
         result = ""
         self.connect_to_mysql()
         sql = "SELECT association FROM app_association WHERE bagid = %s"
@@ -131,12 +131,12 @@ class DBManager(object):
         return result
 
     def get_all_bag_id(self):
-        logger.info(" try to get lock")
         all_bag_id = "all_bag_id"
         redis_result = self.redis_cli.get(all_bag_id)
         if redis_result is not None:
             logger.info("found in redis")
             return redis_result
+        logger.info(" try to get all bag id lock")
         self.lock.acquire()
         logger.info("into lock at:")
         localtime = time.asctime(time.localtime(time.time()))
