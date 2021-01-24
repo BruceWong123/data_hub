@@ -1,3 +1,4 @@
+import redis
 import os
 import ast
 import sys
@@ -14,6 +15,11 @@ from datetime import datetime
 import threading
 import logging
 logger = logging.getLogger('django')
+
+
+redis_cli = redis.Redis(host='127.0.0.1', port=6379)
+redis_cli.set('test', 'Successfully connected to Redis!')
+print(redis_cli.get('test'))
 
 
 class DBManager(object):
@@ -97,6 +103,11 @@ class DBManager(object):
 
     def get_all_timestamps_by_id(self, bagid):
         logger.info("try to get lock for association")
+        bag_association = bagid + "_association"
+        redis_result = redis_cli.get(bag_association)
+        if redis_result is not None:
+            logger.info("found in redis")
+            return redis_result
         self.lock.acquire()
         logger.info("got into lock")
         result = ""
@@ -111,12 +122,18 @@ class DBManager(object):
         logger.info("done mysql ")
         self.close_mysql()
         self.lock.release()
-
+        redis_cli.set(bag_association, result)
         logger.info("release lock")
+
         return result
 
     def get_all_bag_id(self):
         logger.info(" try to get lock")
+        all_bag_id = "all_bag_id"
+        redis_result = redis_cli.get(all_bag_id)
+        if redis_result is not None:
+            logger.info("found in redis")
+            return redis_result
         self.lock.acquire()
         logger.info("into lock at:")
         localtime = time.asctime(time.localtime(time.time()))
@@ -141,6 +158,7 @@ class DBManager(object):
         logger.info("leave lock at:")
         localtime = time.asctime(time.localtime(time.time()))
         logger.info(localtime)
+        redis_cli.set(all_bag_id, result)
         return result
 
     def check_if_bag_exists(self, bagid):
