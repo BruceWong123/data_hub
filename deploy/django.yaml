@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: django
-        image: brucewong123/djangov1
+        image: brucewong123/djangov2
         imagePullPolicy: IfNotPresent
         command: [ "/bin/bash", "-ce", "cd data_hub && git pull && python3 manage.py runserver 0.0.0.0:8000" ]
         ports:
