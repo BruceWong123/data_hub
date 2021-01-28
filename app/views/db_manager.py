@@ -30,7 +30,9 @@ class DBManager(object):
     def connect_to_redis(self):
         host = self.config.get("Redis", "host")
         port = self.config.get("Redis", "port")
-        self.redis_cli = redis.Redis(host=host, port=port)
+        pool = redis.ConnectionPool(
+            host=host, port=port, password="123451", decode_responses=True)
+        self.redis_cli = redis.Redis(connection_pool=pool)
         self.redis_cli.set('test', 'Successfully connected to Redis!')
         print(self.redis_cli.get('test'))
 
@@ -256,7 +258,8 @@ class DBManager(object):
             if i != query_result.count() - 1:
                 result += "deep_route"
         end_time = time.time()
-        logger.info("get back from mongo and return, comsumed {} s".format(end_time - start_time))
+        logger.info("get back from mongo and return, comsumed {} s".format(
+            end_time - start_time))
         return result
 
     def upload_message_by_id_time_topic_version(self, topic_message_pair, bagid, timestamp, topic, version):
