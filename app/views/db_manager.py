@@ -245,7 +245,8 @@ class DBManager(object):
         return result
 
     def get_range_message_by_id_topic(self, bagid, topic, start, end):
-        logger.info("get message by id time topic start end..........")
+        print("get message by id: {} topic : {} start : {} end: {}....".format(
+            bagid, topic, start, end))
         result = ""
         topic = self._translate_topic(topic)
         db_messages = self.mongo_db["messages"]
@@ -335,6 +336,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
