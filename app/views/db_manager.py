@@ -253,13 +253,16 @@ class DBManager(object):
         start_time = time.time()
         query_result = db_messages.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
+        index = 0
         for i, x in enumerate(query_result):
             result += x['timestamp'] + "timestamp_and_message" + x['message']
             if i != query_result.count() - 1:
                 result += "deep_route"
+            logger.info(index)
+            index += 1
         end_time = time.time()
         logger.info("get {} data consumed {:.2} s".format(topic,
-            end_time - start_time))
+                                                          end_time - start_time))
         return result
 
     def upload_message_by_id_time_topic_version(self, topic_message_pair, bagid, timestamp, topic, version):
@@ -332,7 +335,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
