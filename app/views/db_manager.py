@@ -250,7 +250,6 @@ class DBManager(object):
         result = ""
         topic = self._translate_topic(topic)
         db_messages = self.mongo_db["messages"]
-        logger.info("send out query to mongo ..........")
         start_time = time.time()
         query_result = db_messages.find(
             {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
@@ -259,7 +258,8 @@ class DBManager(object):
             result += x['timestamp'] + "timestamp_and_message" + x['message']
             if i != query_result.count() - 1:
                 result += "deep_route"
-            logger.info(index)
+            logger.info(
+                "get frame for id : {} at index : {}".format(bagid, index))
             index += 1
         end_time = time.time()
         logger.info("get {} data consumed {:.2} s".format(topic,
