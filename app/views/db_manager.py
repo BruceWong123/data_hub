@@ -245,7 +245,7 @@ class DBManager(object):
         return result
 
     def get_range_message_by_id_topic(self, bagid, topic, start, end):
-        print("get message by id: {} topic : {} start : {} end: {}....".format(
+        logger.info("get message by id: {} topic : {} start : {} end: {}....".format(
             bagid, topic, start, end))
         result = ""
         topic = self._translate_topic(topic)
