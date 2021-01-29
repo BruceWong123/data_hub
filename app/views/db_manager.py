@@ -40,7 +40,7 @@ class DBManager(object):
         host = self.config.get("MongoDB", "host")
         if host == "10.10.12.21":
             logger.info("use cloud mongodb")
-        else if host == "10.9.9.9":
+        elif host == "10.9.9.9":
             logger.info("use infra mongodb")
         port = self.config.get("MongoDB", "port")
         database = self.config.get("MongoDB", "database")
