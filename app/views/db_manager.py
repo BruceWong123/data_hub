@@ -38,6 +38,10 @@ class DBManager(object):
 
     def connect_to_mongodb(self):
         host = self.config.get("MongoDB", "host")
+        if host == "10.10.12.21":
+            logger.info("use cloud mongodb")
+        else if host == "10.9.9.9":
+            logger.info("use infra mongodb")
         port = self.config.get("MongoDB", "port")
         database = self.config.get("MongoDB", "database")
         username = urllib.parse.quote_plus(self.config.get("MongoDB", "user"))
