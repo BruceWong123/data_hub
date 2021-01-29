@@ -258,7 +258,7 @@ class DBManager(object):
             if i != query_result.count() - 1:
                 result += "deep_route"
         end_time = time.time()
-        logger.info("get back from mongo and return, comsumed {} s".format(
+        logger.info("get {} data consumed {:.2} s".format(topic,
             end_time - start_time))
         return result
 
