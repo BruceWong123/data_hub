@@ -175,7 +175,6 @@ class DBManager(object):
         mysql_query_result = self.mysql_cursor.fetchall()
         self.close_mysql()
         self.lock.release()
-
         # db_messages = self.mongo_db["messages"]
         # mongo_query_result = db_messages.find({"bagid": bagid, })
 
