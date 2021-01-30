@@ -167,6 +167,8 @@ class DBManager(object):
         return result
 
     def check_if_bag_exists(self, bagid):
+
+        print("check bag {}".format(bagid))
         self.lock.acquire()
         self.connect_to_mysql()
         sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
@@ -177,6 +179,9 @@ class DBManager(object):
         self.lock.release()
         # db_messages = self.mongo_db["messages"]
         # mongo_query_result = db_messages.find({"bagid": bagid, })
+
+        result_len = len(mysql_query_result)
+        print(" result len : {}".format(result_len))
 
         if len(mysql_query_result) == 0:
             return False
