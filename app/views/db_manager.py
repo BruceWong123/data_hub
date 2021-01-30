@@ -131,7 +131,8 @@ class DBManager(object):
         logger.info("done mysql ")
         self.close_mysql()
         self.lock.release()
-        self.redis_cli.set(bag_association, result)
+        if len(query_result) > 0:
+            self.redis_cli.set(bag_association, result)
         logger.info("release lock")
 
         return result
@@ -183,6 +184,9 @@ class DBManager(object):
         self.lock.release()
         # db_messages = self.mongo_db["messages"]
         # mongo_query_result = db_messages.find({"bagid": bagid, })
+
+        for row in mysql_query_result:
+            print(str(row[0]))
 
         result_len = len(mysql_query_result)
         print(" result len : {}".format(result_len))
@@ -344,7 +348,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
