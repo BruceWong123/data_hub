@@ -21,6 +21,13 @@ spec:
         command: [ "/bin/bash", "-ce", "cd data_hub && git pull && python3 manage.py runserver 0.0.0.0:8000" ]
         ports:
         - containerPort: 8000
+      nodeSelector:
+        web-server: "true"
+      tolerations:
+      - key: "web-server"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
 
 ---
 apiVersion: v1
