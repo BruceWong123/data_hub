@@ -138,11 +138,11 @@ class DBManager(object):
         return result
 
     def get_all_bag_id(self):
-        all_bag_id = "all_bag_id"
-        redis_result = self.redis_cli.get(all_bag_id)
-        if redis_result is not None:
-            logger.info("found in redis")
-            return redis_result
+        # all_bag_id = "all_bag_id"
+        # redis_result = self.redis_cli.get(all_bag_id)
+        # if redis_result is not None:
+        #     logger.info("found in redis")
+        #     return redis_result
         logger.info(" try to get all bag id lock")
         self.lock.acquire()
         logger.info("into lock at:")
@@ -168,7 +168,7 @@ class DBManager(object):
         logger.info("leave lock at:")
         localtime = time.asctime(time.localtime(time.time()))
         logger.info(localtime)
-        self.redis_cli.set(all_bag_id, result)
+        # self.redis_cli.set(all_bag_id, result)
         return result
 
     def check_if_bag_exists(self, bagid):
