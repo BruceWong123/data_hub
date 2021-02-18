@@ -32,6 +32,13 @@ spec:
       containers:
       - name: mysql
         image: mysql:5.6
+        resources:
+          limits:
+            cpu: '1'
+            memory: 3Gi
+          requests:
+            cpu: '1'
+            memory: 2Gi
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
           value: "1"
@@ -44,11 +51,18 @@ spec:
         - name: mysql-config
           mountPath: /data/middleware-data/mysql/conf/
         - name: mysql-data
-          mountPath: /data/middleware-data/mysql/
+          mountPath: /var/lib/mysql
       volumes:
       - name: mysql-config
         configMap:
           name: mysql-conf
+      nodeSelector:
+        web-server: "true"
+      tolerations:
+      - key: "web-server"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
   volumeClaimTemplates:
   - metadata:
       name: mysql-data
