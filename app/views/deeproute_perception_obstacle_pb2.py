@@ -8,13 +8,15 @@ from google.protobuf import reflection as _reflection
 from google.protobuf import message as _message
 from google.protobuf import descriptor as _descriptor
 import sys
+import os
 _b = sys.version_info[0] < 3 and (
     lambda x: x) or (lambda x: x.encode('latin1'))
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
-
-sys.path.append("/home/bruce/datahub/data_hub/app/views")
+curPath = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(curPath)
+# sys.path.append("/home/bruce/datahub/data_hub/app/views")
 
 import prediction_feature_pb2 as prediction__feature__pb2  # NOQA: E402
 import geometry_pb2 as geometry__pb2  # NOQA: E402

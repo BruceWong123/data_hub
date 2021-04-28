@@ -82,6 +82,8 @@ urlpatterns = [
         views.api.getTaskInfoById),
 
 
+
+
     # test get trajectory
     url(r'^api/trajectory/download/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getTrajectoryInfoById),
@@ -95,9 +97,7 @@ urlpatterns = [
     url(r'^api/trajectory/evaluate/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.evaluateTrajectoryById),
 
-    # get all timestamps has trajectory
-
-    # for given timestamp, get all objectid has trajectory
+    # given bagid, get all timestamps in that bag
     url(r'^api/trajectory/timestamps/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getTimestampsByBagid),
 

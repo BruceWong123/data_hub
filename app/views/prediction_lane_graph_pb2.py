@@ -2,6 +2,7 @@
 # source: prediction_lane_graph.proto
 
 
+import os
 from google.protobuf import descriptor_pb2
 from google.protobuf import symbol_database as _symbol_database
 from google.protobuf import reflection as _reflection
@@ -13,8 +14,9 @@ _b = sys.version_info[0] < 3 and (
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
-
-sys.path.append("/home/bruce/datahub/data_hub/app/views")
+curPath = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(curPath)
+# sys.path.append("/home/bruce/datahub/data_hub/app/views")
 
 import map_lane_pb2 as map__lane__pb2  # NOQA: E402
 import pnc_point_pb2 as pnc__point__pb2  # NOQA: E402
