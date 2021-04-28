@@ -1,19 +1,25 @@
-import redis
-import os
-import ast
-import sys
-import time
-import base64
-import zlib
-import copy
-import pprint
-import configparser
-from pymongo import MongoClient
-import six.moves.urllib as urllib
-import mysql.connector as mysql
-from datetime import datetime
-import threading
+
 import logging
+import threading
+from datetime import datetime
+import mysql.connector as mysql
+import six.moves.urllib as urllib
+from pymongo import MongoClient
+import configparser
+import pprint
+import copy
+import zlib
+import base64
+import time
+import ast
+import os
+import redis
+import google.protobuf.text_format as text
+import pprint
+from app.views.traj.handle_attribute import handle_attribute
+from app.views.traj.map_api import HDMap
+from app.views.deeproute_perception_obstacle_pb2 import PerceptionObstacles
+from app.views.deeproute_prediction_obstable_pb2 import PredictionObstacles
 logger = logging.getLogger('django')
 
 
@@ -24,7 +30,7 @@ class DBManager(object):
             os.path.dirname(__file__)) + "/config.ini")
         self.connect_to_mongodb()
         self.connect_to_mysql()
-        self.connect_to_redis()
+        # self.connect_to_redis()
         self.lock = threading.RLock()
 
     def connect_to_redis(self):
@@ -112,10 +118,10 @@ class DBManager(object):
 
     def get_all_timestamps_by_id(self, bagid):
         bag_association = bagid + "_association"
-        redis_result = self.redis_cli.get(bag_association)
-        if redis_result is not None:
-            logger.info("found in redis")
-            return redis_result
+        # redis_result = self.redis_cli.get(bag_association)
+        # if redis_result is not None:
+        #     logger.info("found in redis")
+        #     return redis_result
         logger.info("try to get lock for association")
         self.lock.acquire()
         logger.info("got into association lock")
@@ -131,8 +137,8 @@ class DBManager(object):
         logger.info("done mysql ")
         self.close_mysql()
         self.lock.release()
-        if len(query_result) > 0:
-            self.redis_cli.set(bag_association, result)
+        # if len(query_result) > 0:
+        #     self.redis_cli.set(bag_association, result)
         logger.info("release lock")
 
         return result
@@ -228,14 +234,10 @@ class DBManager(object):
     def get_frame_by_id_time(self, bagid, timestamp):
         result = "no data found"
         db_messages = self.mongo_db["messages"]
-        query_result = db_messages.find({"bagid": bagid, "timestamp": {"$lte": timestamp}, "topic": {
-            "$regex": "^/perception/objects"}})
+        query_result = db_messages.find({"bagid": bagid, "topic": {
+            "$regex": "^/perception/objects"}}).limit(10)
         for x in query_result:
-            y = db_messages.find_one({"$and": [{"bagid": bagid, "topic": {
-                "$regex": "^/canbus/car_state"}}, {"timestamp": {"$lte": timestamp}}]}, sort=[("timestamp", -1)])
-            if not y:
-                break
-            result = y.get('message') + " | " + x["message"]
+            result = x["message"] + "||||||"
         return result
 
     def get_message_by_id_time_topic_version(self, bagid, timestamp, topic, version):
@@ -305,7 +307,267 @@ class DBManager(object):
                 }
             )
 
+# trajectory related
+    def get_trajectoryinfo_by_id(self, bagid):
+
+        db_task_data = self.mongo_db["tasks"]
+        query_result = db_task_data.find_one({"taskid": taskid})
+        if query_result is None:
+            return {}
+        else:
+            data_dict = {
+                "taskid": taskid,
+                "play_mode": query_result.get("play_mode"),
+                "scene_id": query_result.get("scene_id"),
+                "subscene_id": query_result.get("subscene_id"),
+                "planning_version": query_result.get("planning_version"),
+                "perception_version": query_result.get("perception_version")
+            }
+            return data_dict
+
+    def read_info_by_proto(self, filename, proto_format):
+        if filename.split(".")[-1] == "bin":
+            with open(filename, "rb") as f:
+                proto_info = proto_format.FromString(f.read())
+        elif filename.split(".")[-1] == "cfg" or filename.split(".")[-1] == "txt":
+            with open(filename, "r") as f:
+                proto_info = text.Parse(f.read(), proto_format)
+        else:
+            raise ValueError("unknown format!")
+        return proto_info
+
+    def insert_trajectory_attribute(self, document_contexts):
+        print("inserting feature....")
+
+        traj_features = self.mongo_db["features"]
+
+        for key in document_contexts.keys():
+            document_context = document_contexts[key]
+            traj_features.update(
+                {
+                    "timestamp": key,
+                    "bag_name": document_context["bag_name"]
+                }, document_context, True
+            )
+        print("done insert")
+        return
+
+    def evaluate_trajectories(self, bagid, seqlen):
+        print("evaluating ")
+
+        db_traj_data = self.mongo_db["trajectories"]
+
+        # timestamps = db_traj_data.distinct("timestamp")
+        # object_ids = db_traj_data.distinct("perception_object_id")
+        object_ids = db_traj_data.find(
+            {"bagid": bagid}).distinct("perception_object_id")
+
+        document_contexts = dict()
+
+        print("len of ids: ", len(object_ids))
+
+        count = 0
+        for object_id in object_ids:
+            print("evaluating ", object_id)
+            count = count+1
+            object_data = db_traj_data.find(
+                {"perception_object_id": object_id})
+
+            object_data = [doc for doc in object_data]
+            if len(object_data) < seqlen:
+                print("no trajectory", object_id)
+                continue
+            print("has trajectory", object_id)
+            points = []
+            lane_ids = []
+            data_path = "/home/bruce/datahub/data_hub/app/views/"
+            map_path = os.path.join(data_path, "baoan-map_1207.bin")
+            hdmap = HDMap(map_path)
+
+            for i in range(seqlen-1):
+                x = object_data[i]
+                points.append([x["x"], x["y"]])
+                lane_ids.append(x["lane_id"])
+
+            for i in range(len(object_data) - seqlen):
+                data = object_data[i]
+                timestamp = data["timestamp"]
+
+                obj_type = data["preception_object_type"]
+                obj_id = data["perception_object_id"]
+                points.append([data["x"], data["y"]])
+                lane_ids.append(data["lane_id"])
+
+                document_context = dict()
+                if timestamp in document_contexts:
+                    document_context = document_contexts[timestamp]
+                else:
+                    document_context['bag_name'] = bagid
+                    document_context['timestamp'] = timestamp
+                    document_context['ids'] = []
+                    document_context["turn"] = []
+                    document_context['is_still'] = []
+                    document_context["on_lane"] = []
+                    document_context["lane_change"] = []
+                    document_context["on_crosswalk"] = []
+                    document_context["in_junction"] = []
+                    document_contexts[timestamp] = document_context
+                handle_result = handle_attribute(obj_type, obj_id, document_context,
+                                                 points, lane_ids, hdmap)
+                del points[0]
+                del lane_ids[0]
+            break
+        # pp = pprint.PrettyPrinter(indent=2)
+        # pp.pprint(document_contexts)
+        if len(document_contexts) > 0:
+            print("dict size ", len(document_contexts))
+            self.insert_trajectory_attribute(document_contexts)
+        return document_contexts
+
+    def get_objects_by_feature(self, bagid, timestamp, feature):
+        traj_features = self.mongo_db["features"]
+        timestamp = int(timestamp)
+
+        query_result = traj_features.find(
+            {"bag_name": bagid, "timestamp": timestamp})
+
+        if query_result is not None:
+            for x in query_result:
+                result = x[feature]
+        return str(result)
+
+    def get_objects_by_timestamp(self, bagid, timestamp):
+        db_traj_data = self.mongo_db["trajectories"]
+        timestamp = int(timestamp)
+
+        print("bagid ", bagid, " timestamp", timestamp)
+
+        query_result = db_traj_data.find(
+            {"bagid": bagid, "timestamp": timestamp}).distinct("perception_object_id")
+
+        result = []
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
+        return str(result)
+
+    def get_timestamps_by_bagid(self, bagid):
+        db_traj_data = self.mongo_db["trajectories"]
+
+        query_result = db_traj_data.find(
+            {"bagid": bagid}).distinct("timestamp")
+
+        result = []
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
+        return str(result)
+
+    def get_trajectory_attri(self, bagid, timestamp):
+        traj_features = self.mongo_db["features"]
+        timestamp = int(timestamp)
+        query_result = traj_features.find(
+            {"bag_name": bagid, "timestamp": timestamp})
+        result = []
+        if query_result is not None:
+            for x in query_result:
+                print("fasdfasfd111")
+                result.append(x)
+        return str(result)
+
+    def get_trajectory_data(self, bagid, timestamp, objectid, seqlen):
+        db_traj_data = self.mongo_db["trajectories"]
+        timestamp = int(timestamp)
+        objectid = int(objectid)
+        seqlen = int(seqlen)
+        query_result = db_traj_data.find(
+            {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}).limit(seqlen)
+        result = []
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
+        return str(result)
+
+    def get_multi_trajectory_data(self, bagid, start_time, end_time, objectid, seqlen):
+        db_traj_data = self.mongo_db["trajectories"]
+        start_time = int(start_time)
+        end_time = int(end_time)
+        objectid = int(objectid)
+        seqlen = int(seqlen)
+        query_result = db_traj_data.find(
+            {"bagid": bagid, "timestamp": {"$gte": start_time, "$lte": end_time}, "perception_object_id": objectid}).limit(seqlen)
+        result = []
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
+        return str(result)
+
+    def upload_trajectoryinfo_by_id(self, data, bagid):
+        print("uploading....")
+        result = {}
+        db_traj_data = self.mongo_db["trajectories"]
+
+        proto_format = PredictionObstacles()
+        prediction_objects = text.Parse(data, proto_format)
+
+        timestamp = prediction_objects.time_measurement
+        for prediction_object in prediction_objects.prediction_obstacle:
+            perception_object = prediction_object.perception_obstacle
+            lane = prediction_object.feature[0].lane
+            is_still = prediction_object.feature[0].is_still
+            if len(lane.current_lane_feature) > 0:
+                lane_id = lane.current_lane_feature[0].lane_id
+            else:
+                lane_id = -1
+            result[perception_object.id] = []
+            data_dict = {}
+            x, y, z = perception_object.position.x, perception_object.position.y, perception_object.position.z
+            l, w, h = perception_object.length, perception_object.width, perception_object.height
+            theta = perception_object.theta
+            v_x, v_y = perception_object.velocity.x, perception_object.velocity.y
+            a_x, a_y = perception_object.acceleration.x, perception_object.acceleration.y
+            need_fields = [timestamp, x, y, z, l, w, h, theta, v_x, v_y, a_x, a_y,
+                           lane_id, perception_object.type, is_still]
+
+            result[perception_object.id].append(need_fields)
+            data_dict["bagid"] = bagid
+            data_dict["perception_object_id"] = perception_object.id
+            data_dict["timestamp"] = timestamp
+            data_dict["x"] = x
+            data_dict["y"] = y
+            data_dict["z"] = z
+            data_dict["l"] = l
+            data_dict["w"] = w
+            data_dict["h"] = h
+            data_dict["theta"] = theta
+            data_dict["v_x"] = v_x
+            data_dict["v_y"] = v_y
+            data_dict["a_x"] = a_x
+            data_dict["a_y"] = a_y
+            data_dict["lane_id"] = lane_id
+            data_dict["preception_object_type"] = perception_object.type
+            data_dict["is_still"] = is_still
+            query_result = db_traj_data.find_one(
+                {"bagid": bagid, "timestamp": timestamp, "perception_object_id": perception_object.id})
+            # print(query_result)
+            if query_result is None:
+                db_traj_data.insert_one(data_dict)
+            else:
+                db_traj_data.update(
+                    {
+                        "_id": query_result.get('_id')
+                    }, {
+                        "$set": data_dict
+                    }
+                )
+        # print("before evaluate")
+        # self.evaluate_trajectories(bagid, seqlen)
+        # print("upload done")
+        return result
+
+
 # task related
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -348,6 +610,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

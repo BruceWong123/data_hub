@@ -1,0 +1,12 @@
+# data pipeline websocket configuration
+connection:
+  ws_url: "ws://10.10.10.70:8088/data/provider/ws/data/rosbag/binary"
+  username: "perceptionteam"
+  password: "r6zR86V4*+=*"
+
+topic_body:
+  type: "timeline_index"
+  dataId: "WH-E70-04_20200628_pm_re06_part.bag"
+  startTime: "1584369292801341"
+  endTime: "1584369293801341"
+  topic: "/perception/objects"

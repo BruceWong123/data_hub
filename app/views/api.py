@@ -1,3 +1,4 @@
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
@@ -14,8 +15,9 @@ from ..serializers import *
 from app.views.db_manager import DBManager
 import json
 import logging
-logger = logging.getLogger('django')
+from django.http import QueryDict
 
+logger = logging.getLogger('django')
 
 db = DBManager()
 
@@ -94,6 +96,67 @@ def uploadMessageByIdTimeTopicVersion(request, bagid, timestamp, topic, version)
 def getRangeMessageByIdTopic(request, bagid, topic, start, end):
     if request.method == 'GET':
         return HttpResponse(db.get_range_message_by_id_topic(bagid, topic, start, end))
+
+
+# Trajectory related
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getTrajectoryInfoById(request, bagid):
+    if request.method == 'GET':
+        return JsonResponse(db.get_trajectoryinfo_by_id(bagid))
+
+# Trajectory related
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getTrajectoryAttri(request, bagid, timestamp):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_trajectory_attri(bagid, timestamp)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getTrajectoryData(request, bagid, timestamp, objectid, seqlen):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_trajectory_data(bagid, timestamp, objectid, seqlen)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getMultiTrajectoryData(request, bagid, start_time, end_time, objectid, seqlen):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_multi_trajectory_data(bagid, start_time, end_time, objectid, seqlen)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getObjectsByFeature(request, bagid, timestamp, feature):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_objects_by_feature(bagid, timestamp, feature)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getObjectsByTimestamp(request, bagid, timestamp):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_objects_by_timestamp(bagid, timestamp)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getTimestampsByBagid(request, bagid):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_timestamps_by_bagid(bagid)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def evaluateTrajectoryById(request, bagid):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.evaluate_trajectories(bagid, 50)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def uploadTrajectoryInfoById(request):
+    print("before into %s" % request.method)
+    if request.method == 'PUT' and request is not None:
+        print("into put")
+        request_body = request.data
+        request_dict = request_body.dict()
+        return JsonResponse(db.upload_trajectoryinfo_by_id(request_dict.get("data"), request_dict.get("bagid")))
 
 # task related
 

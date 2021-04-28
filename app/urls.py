@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 from django.urls import path, re_path
 from app import views
@@ -85,7 +82,45 @@ urlpatterns = [
         views.api.getTaskInfoById),
 
 
+    # test get trajectory
+    url(r'^api/trajectory/download/(?P<bagid>[0-9a-zA-Z_]+)/$',
+        views.api.getTrajectoryInfoById),
 
+    # upload trajectory
+    url(r'^api/trajectory/upload/$',
+        views.api.uploadTrajectoryInfoById),
+
+
+    # evaluate trajectory
+    url(r'^api/trajectory/evaluate/(?P<bagid>[0-9a-zA-Z_]+)/$',
+        views.api.evaluateTrajectoryById),
+
+    # get all timestamps has trajectory
+
+    # for given timestamp, get all objectid has trajectory
+    url(r'^api/trajectory/timestamps/(?P<bagid>[0-9a-zA-Z_]+)/$',
+        views.api.getTimestampsByBagid),
+
+    # given timestamp, get all objectid has trajectory
+    url(r'^api/trajectory/objects/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
+        views.api.getObjectsByTimestamp),
+
+    # given timestamp, get all trajectory attribute
+    url(r'^api/trajectory/attributes/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
+        views.api.getTrajectoryAttri),
+
+    # given timestamp, attribute, get all objectid has trajectory in that attribute
+    url(r'^api/trajectory/objects/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/(?P<feature>[a-zA-Z_]+)/$',
+        views.api.getObjectsByFeature),
+
+
+    # download single frame trajectory
+    url(r'^api/trajectory/data/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/(?P<objectid>[0-9]+)/(?P<seqlen>[0-9]+)/$',
+        views.api.getTrajectoryData),
+
+    # download multiple frame trajectory
+    url(r'^api/trajectory/data/(?P<bagid>[0-9a-zA-Z_]+)/(?P<start_time>[0-9]+)/(?P<end_time>[0-9]+)/(?P<objectid>[0-9]+)/(?P<seqlen>[0-9]+)/$',
+        views.api.getMultiTrajectoryData),
 
     url(r'^(?!/api).*$', views.views.pages, name='pages'),
 

@@ -37,7 +37,7 @@ result = mycol.find({"topic": {"$regex": "^/p"}}).limit(1)
 print("--- %s seconds --- for reading " % (time.time() - start_time))
 
 
-redis_client = redis.Redis(host='34.218.26.149', port=6379)
+# redis_client = redis.Redis(host='34.218.26.149', port=6379)
 
 for x in result:
     time = x.get('timestamp')
@@ -49,5 +49,5 @@ for x in result:
     values = {x.get('topic'): x.get('message'),
               y.get('topic'): y.get('message')}
     key = str(x.get('bagid')) + '@' + str(x.get('timestamp'))
-    print("save in redis as key: " + key)
-    redis_client.hmset(key, values)
+    # print("save in redis as key: " + key)
+    # redis_client.hmset(key, values)
