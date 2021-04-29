@@ -388,8 +388,8 @@ class DBManager(object):
             print("has trajectory", object_id)
             points = []
             lane_ids = []
-            data_path = "/home/bruce/datahub/data_hub/app/views/"
-            map_path = os.path.join(data_path, "baoan-map_1207.bin")
+            curPath = os.path.abspath(os.path.dirname(__file__))
+            map_path = os.path.join(curPath, "baoan-map_1207.bin")
             hdmap = HDMap(map_path)
 
             for i in range(seqlen-1):
@@ -424,12 +424,13 @@ class DBManager(object):
                                                  points, lane_ids, hdmap)
                 del points[0]
                 del lane_ids[0]
+            break
         # pp = pprint.PrettyPrinter(indent=2)
         # pp.pprint(document_contexts)
         if len(document_contexts) > 0:
             print("dict size ", len(document_contexts))
             self.insert_trajectory_attribute(document_contexts)
-        return document_contexts
+        return "done"
 
     def get_objects_by_feature(self, bagid, timestamp, feature):
         traj_features = self.mongo_db["features"]
@@ -575,6 +576,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -617,7 +619,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
