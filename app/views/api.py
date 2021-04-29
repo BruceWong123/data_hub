@@ -138,6 +138,12 @@ def getObjectsByTimestamp(request, bagid, timestamp):
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
+def getBagidsInTrajectory(request):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_all_bagids_trajectory()})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
 def getTimestampsByBagid(request, bagid):
     if request.method == 'GET':
         return JsonResponse({'result': db.get_timestamps_by_bagid(bagid)})

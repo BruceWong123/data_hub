@@ -116,6 +116,14 @@ class DBManager(object):
             message = message + '_' + version
         return message
 
+    def get_all_bagids_trajectory(self):
+        db_traj_data = self.mongo_db["trajectories"]
+        bag_ids = db_traj_data.distinct("bagid")
+        result = []
+        for bag_id in bag_ids:
+            result.append(bag_id)
+        return str(result)
+
     def get_all_timestamps_by_id(self, bagid):
         bag_association = bagid + "_association"
         # redis_result = self.redis_cli.get(bag_association)
@@ -568,6 +576,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -610,7 +619,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

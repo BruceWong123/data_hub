@@ -97,6 +97,10 @@ urlpatterns = [
     url(r'^api/trajectory/evaluate/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.evaluateTrajectoryById),
 
+    # get all bagids
+    url(r'^api/trajectory/bags/all/$',
+        views.api.getBagidsInTrajectory),
+
     # given bagid, get all timestamps in that bag
     url(r'^api/trajectory/timestamps/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getTimestampsByBagid),
