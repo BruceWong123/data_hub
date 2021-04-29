@@ -361,7 +361,7 @@ class DBManager(object):
         return
 
     def evaluate_trajectories(self, bagid, seqlen):
-        print("evaluating ")
+        logger.info("into evaluating ")
 
         db_traj_data = self.mongo_db["trajectories"]
 
@@ -372,11 +372,11 @@ class DBManager(object):
 
         document_contexts = dict()
 
-        print("len of ids: ", len(object_ids))
+        # logger.info("len of ids: ", len(object_ids))
 
         count = 0
         for object_id in object_ids:
-            print("evaluating ", object_id)
+            logger.info("evaluating: %s " % object_id)
             count = count+1
             object_data = db_traj_data.find(
                 {"perception_object_id": object_id})
@@ -424,7 +424,7 @@ class DBManager(object):
                                                  points, lane_ids, hdmap)
                 del points[0]
                 del lane_ids[0]
-            break
+
         # pp = pprint.PrettyPrinter(indent=2)
         # pp.pprint(document_contexts)
         if len(document_contexts) > 0:
