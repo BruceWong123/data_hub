@@ -113,6 +113,10 @@ urlpatterns = [
     url(r'^api/trajectory/attributes/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/$',
         views.api.getTrajectoryAttri),
 
+    # given bagid, timestamp, upload attribute
+    url(r'^api/trajectory/attributes/upload/$',
+        views.api.uploadTrajectoryAttri),
+
     # given timestamp, attribute, get all objectid has trajectory in that attribute
     url(r'^api/trajectory/objects/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/(?P<feature>[a-zA-Z_]+)/$',
         views.api.getObjectsByFeature),

@@ -25,6 +25,21 @@ class Test_UPload:
         session.put(url=upload_url, data=data_dict)
         print("upload done")
 
+    def upload_attributes(self):
+        service_end_point = "http://127.0.0.1:8000/api/"
+        upload_url = service_end_point + "trajectory/attributes/upload/"
+
+        data = "{ \"1580604434350000\":{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_40\", \"timestamp\": 1580604434350000, \"ids\": [], \"turn\": [], \"is_still\": [1], \"on_lane\": [1], \"lane_change\": [], \"on_crosswalk\": [], \"in_junction\": []}}"
+
+        data_dict = {}
+        data_dict["bagid"] = "YR_MKZ_1_20201207_022851_755_40"
+        data_dict["data"] = data
+        session = requests.session()
+        session.keep_alive = False
+        print(data_dict)
+        session.put(url=upload_url, data=data_dict)
+        print("upload done")
+
     def upload_trajectory(self, filename):
         service_end_point = "http://127.0.0.1:8000/api/"
         upload_url = service_end_point + "trajectory/upload/"
@@ -61,4 +76,4 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    test.upload_labeling()
+    test.upload_attributes()

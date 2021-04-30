@@ -573,6 +573,29 @@ class DBManager(object):
         # self.evaluate_trajectories(bagid, seqlen)
         # print("upload done")
         return result
+
+    def upload_attri_by_id(self, data, bagid):
+        print("upload labeling 111....")
+        result = {}
+        db_attri_data = self.mongo_db["features"]
+
+        print(bagid)
+
+        data = json.loads(data)
+        print(data)
+
+        for key in data.keys():
+            print(key)
+            print(data[key])
+            db_attri_data.update(
+                {
+                    "timestamp": key,
+                    "bag_name": bagid
+                }, data[key], True
+            )
+        print("done insert")
+        return "done"
+
 # labeling related
 
     def get_labelinginfo_by_id(self, bagid, index):
@@ -607,7 +630,6 @@ class DBManager(object):
         print(data)
 
         for key in data.keys():
-            print(key)
             data[key]["index"] = key
             data[key]["bagid"] = bagid
             db_label_data.update(
@@ -617,9 +639,7 @@ class DBManager(object):
                 }, data[key], True
             )
         print("done insert")
-        return
-
-        return result
+        return "done"
 
 
 # task related

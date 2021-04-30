@@ -110,6 +110,7 @@ def getTrajectoryInfoById(request, bagid):
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getTrajectoryAttri(request, bagid, timestamp):
     if request.method == 'GET':
+        print("get attributes")
         return JsonResponse({'result': db.get_trajectory_attri(bagid, timestamp)})
 
 
@@ -163,6 +164,17 @@ def uploadTrajectoryInfoById(request):
         request_body = request.data
         request_dict = request_body.dict()
         return JsonResponse(db.upload_trajectoryinfo_by_id(request_dict.get("data"), request_dict.get("bagid")))
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def uploadTrajectoryAttri(request):
+    print("before into %s" % request.method)
+    if request.method == 'PUT' and request is not None:
+        request_body = request.data
+        request_dict = request_body.dict()
+        return JsonResponse(db.upload_attri_by_id(request_dict.get("data"), request_dict.get("bagid")))
+
+
 # labeling related
 
 
