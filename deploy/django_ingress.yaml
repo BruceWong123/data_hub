@@ -9,7 +9,7 @@ metadata:
   namespace: planning-public-dev
 spec:
   rules:
-  - host: "dataserver.planning.simulation.deeproute.ai"
+  - host: "dataserver.prediction.simulation.deeproute.ai"
     http:
       paths:
       - backend:

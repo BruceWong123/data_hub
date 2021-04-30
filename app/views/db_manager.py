@@ -1,4 +1,5 @@
 
+import json
 import logging
 import threading
 from datetime import datetime
@@ -375,6 +376,9 @@ class DBManager(object):
         # logger.info("len of ids: ", len(object_ids))
 
         count = 0
+        curPath = os.path.abspath(os.path.dirname(__file__))
+        map_path = os.path.join(curPath, "baoan-map_1207.bin")
+        hdmap = HDMap(map_path)
         for object_id in object_ids:
             logger.info("evaluating: %s " % object_id)
             count = count+1
@@ -388,9 +392,6 @@ class DBManager(object):
             print("has trajectory", object_id)
             points = []
             lane_ids = []
-            curPath = os.path.abspath(os.path.dirname(__file__))
-            map_path = os.path.join(curPath, "baoan-map_1207.bin")
-            hdmap = HDMap(map_path)
 
             for i in range(seqlen-1):
                 x = object_data[i]
@@ -572,10 +573,56 @@ class DBManager(object):
         # self.evaluate_trajectories(bagid, seqlen)
         # print("upload done")
         return result
+# labeling related
+
+    def get_labelinginfo_by_id(self, bagid, index):
+        result = ""
+        db_label_data = self.mongo_db["labelings"]
+        query_result = db_label_data.find({"bagid": bagid, "index": index})
+
+        if query_result is not None:
+            for x in query_result:
+                result = x
+        return str(result)
+
+    def get_multi_labelinginfo_by_id(self, bagid, start, end):
+        result = []
+        db_label_data = self.mongo_db["labelings"]
+        query_result = db_label_data.find(
+            {"bagid": bagid, "index": {"$gte": start, "$lte": end}})
+
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
+        return str(result)
+
+    def upload_labelinginfo_by_id(self, data, bagid):
+        print("upload labeling 111....")
+        result = {}
+        db_label_data = self.mongo_db["labelings"]
+
+        print(bagid)
+
+        data = json.loads(data)
+        print(data)
+
+        for key in data.keys():
+            print(key)
+            data[key]["index"] = key
+            data[key]["bagid"] = bagid
+            db_label_data.update(
+                {
+                    "index": key,
+                    "bagid": bagid
+                }, data[key], True
+            )
+        print("done insert")
+        return
+
+        return result
 
 
 # task related
-
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -619,6 +666,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

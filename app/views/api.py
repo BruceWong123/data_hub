@@ -163,6 +163,28 @@ def uploadTrajectoryInfoById(request):
         request_body = request.data
         request_dict = request_body.dict()
         return JsonResponse(db.upload_trajectoryinfo_by_id(request_dict.get("data"), request_dict.get("bagid")))
+# labeling related
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def uploadLabelingInfoById(request):
+    print("before into %s" % request.method)
+    if request.method == 'PUT' and request is not None:
+        request_body = request.data
+        request_dict = request_body.dict()
+        return JsonResponse(db.upload_labelinginfo_by_id(request_dict.get("data"), request_dict.get("bagid")))
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getLabelingInfoById(request, bagid, index):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_labelinginfo_by_id(bagid, index)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getMultiLabelingInfoById(request, bagid, start, end):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_multi_labelinginfo_by_id(bagid, start, end)})
 
 # task related
 

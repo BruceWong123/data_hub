@@ -83,7 +83,7 @@ urlpatterns = [
 
 
 
-
+    # Trajectory related
     # test get trajectory
     url(r'^api/trajectory/download/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getTrajectoryInfoById),
@@ -125,6 +125,23 @@ urlpatterns = [
     # download multiple frame trajectory
     url(r'^api/trajectory/data/(?P<bagid>[0-9a-zA-Z_]+)/(?P<start_time>[0-9]+)/(?P<end_time>[0-9]+)/(?P<objectid>[0-9]+)/(?P<seqlen>[0-9]+)/$',
         views.api.getMultiTrajectoryData),
+
+
+
+    # label related
+
+
+    # upload labeling
+    url(r'^api/labeling/upload/$',
+        views.api.uploadLabelingInfoById),
+
+    # download labeling data
+    url(r'^api/labeling/(?P<bagid>[0-9a-zA-Z_]+)/(?P<index>[0-9]+)/$',
+        views.api.getLabelingInfoById),
+
+    # download labeling data multiple frame
+    url(r'^api/labeling/(?P<bagid>[0-9a-zA-Z_]+)/(?P<start>[0-9]+)/(?P<end>[0-9]+)/$',
+        views.api.getMultiLabelingInfoById),
 
     url(r'^(?!/api).*$', views.views.pages, name='pages'),
 
