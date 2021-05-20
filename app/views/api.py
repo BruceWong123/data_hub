@@ -179,18 +179,47 @@ def uploadTrajectoryAttri(request):
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
-def uploadLabelingInfoById(request):
+def uploadLabelingIndexById(request):
     print("before into %s" % request.method)
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_labelinginfo_by_id(request_dict.get("data"), request_dict.get("bagid")))
+        return JsonResponse(db.upload_labeling_index_by_id(request_dict.get("data"), request_dict.get("bagid")))
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
-def getLabelingInfoById(request, bagid, index):
+def getLabelingIndexById(request, bagid, topic):
     if request.method == 'GET':
-        return JsonResponse({'result': db.get_labelinginfo_by_id(bagid, index)})
+        return JsonResponse({'result': db.get_labeling_index_by_id(bagid, topic)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def uploadLabelingTimeById(request):
+    print("before into %s" % request.method)
+    if request.method == 'PUT' and request is not None:
+        request_body = request.data
+        request_dict = request_body.dict()
+        return JsonResponse(db.upload_labeling_time_by_id(request_dict.get("data"), request_dict.get("bagid")))
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getLabelingTimeById(request, bagid, index):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_labeling_time_by_id(bagid, index)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getLabelingData(request, bagid, anotation_type, frame_index):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_labeling_data(bagid, anotation_type, frame_index)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
+def getLabelingDataByPost(request):
+    if request.method == 'POST':
+        if request.data is not None:
+            data_dict = request.data.dict()
+            return JsonResponse({'result': db.get_labeling_data_by_post(data_dict)})
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

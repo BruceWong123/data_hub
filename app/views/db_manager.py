@@ -598,14 +598,105 @@ class DBManager(object):
 
 # labeling related
 
-    def get_labelinginfo_by_id(self, bagid, index):
+    def get_labeling_time_by_id(self, bagid, index):
         result = ""
-        db_label_data = self.mongo_db["labelings"]
-        query_result = db_label_data.find({"bagid": bagid, "index": index})
+        print("bagid ", bagid)
+        print("index ", index)
+        db_label_data = self.mongo_db["labeling_time"]
+        query_result = db_label_data.find(
+            {"bagid": bagid, "index": str(index)})
 
         if query_result is not None:
             for x in query_result:
                 result = x
+        return str(result)
+
+    def upload_labeling_time_by_id(self, data, bagid):
+        print("upload labeling time 111....")
+        result = {}
+        db_label_data = self.mongo_db["labeling_time"]
+
+        data = json.loads(data)
+
+        for key in data.keys():
+            insert_data = dict()
+            insert_data["index"] = key
+            insert_data["bagid"] = bagid
+            insert_data["data"] = data[key]
+            db_label_data.update(
+                {
+                    "index": key,
+                    "bagid": bagid
+                }, {
+                    "$set": insert_data
+                }, True
+            )
+        print("done insert")
+        return "done"
+
+    def get_labeling_index_by_id(self, bagid, topic):
+        result = ""
+        db_label_data = self.mongo_db["labeling_index"]
+        query_result = db_label_data.find({"bagid": bagid, "topic": topic})
+
+        if query_result is not None:
+            for x in query_result:
+                result = x
+        return str(result)
+
+    def upload_labeling_index_by_id(self, data, bagid):
+        print("upload labeling 111....")
+        result = {}
+        db_label_data = self.mongo_db["labeling_index"]
+
+        data = json.loads(data)
+
+        for key in data.keys():
+            insert_key = key.replace("/", "_")
+            print(len(insert_key))
+            insert_key = insert_key[1: len(insert_key)]
+            print("insert ", insert_key)
+            insert_data = dict()
+            insert_data["topic"] = insert_key
+            insert_data["bagid"] = bagid
+            insert_data["data"] = data[key]
+            db_label_data.update(
+                {
+                    "topic": insert_key,
+                    "bagid": bagid
+                }, {
+                    "$set": insert_data
+                }, True
+            )
+        print("done insert")
+        return "done"
+
+    def get_labeling_data(self, bagid,  anotation_type, frame_index):
+        result = []
+        db_label_data = self.mongo_db["labeling_data"]
+        query_result = db_label_data.find(
+            {"bagid": bagid, "index": frame_index, "anotation": anotation_type})
+
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
+        return str(result)
+
+    def get_labeling_data_by_post(data_dict):
+        result = []
+        db_label_data = self.mongo_db["labeling_data"]
+        frame_id = data_dict["frameId"]
+        query_result = None
+        if isinstance(frame_id, list):
+            query_result = db_label_data.find({"bagid": data_dict["bagName"], "index": {
+                                              "$in": frame_id}, "anotation": data_dict["annotationType"]})
+        else:
+            query_result = db_label_data.find(
+                {"bagid": data_dict["bagName"], "index": data_dict["frameId"], "anotation": data_dict["annotationType"]})
+
+        if query_result is not None:
+            for x in query_result:
+                result.append(x)
         return str(result)
 
     def get_multi_labelinginfo_by_id(self, bagid, start, end):
@@ -618,28 +709,6 @@ class DBManager(object):
             for x in query_result:
                 result.append(x)
         return str(result)
-
-    def upload_labelinginfo_by_id(self, data, bagid):
-        print("upload labeling 111....")
-        result = {}
-        db_label_data = self.mongo_db["labelings"]
-
-        print(bagid)
-
-        data = json.loads(data)
-        print(data)
-
-        for key in data.keys():
-            data[key]["index"] = key
-            data[key]["bagid"] = bagid
-            db_label_data.update(
-                {
-                    "index": key,
-                    "bagid": bagid
-                }, data[key], True
-            )
-        print("done insert")
-        return "done"
 
 
 # task related

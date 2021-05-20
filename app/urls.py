@@ -134,14 +134,29 @@ urlpatterns = [
 
     # label related
 
-
     # upload labeling
-    url(r'^api/labeling/upload/$',
-        views.api.uploadLabelingInfoById),
+    url(r'^api/labeling/time/upload/$',
+        views.api.uploadLabelingTimeById),
 
     # download labeling data
-    url(r'^api/labeling/(?P<bagid>[0-9a-zA-Z_]+)/(?P<index>[0-9]+)/$',
-        views.api.getLabelingInfoById),
+    url(r'^api/labeling/time/(?P<bagid>[0-9a-zA-Z_]+)/(?P<index>[0-9]+)/$',
+        views.api.getLabelingTimeById),
+
+    # upload labeling
+    url(r'^api/labeling/index/upload/$',
+        views.api.uploadLabelingIndexById),
+
+    # download labeling data
+    url(r'^api/labeling/index/(?P<bagid>[0-9a-zA-Z_]+)/(?P<topic>[0-9a-zA-Z_]+)/$',
+        views.api.getLabelingIndexById),
+
+    # download labeling data multiple frame
+    url(r'^api/labeling/(?P<bagid>[0-9a-zA-Z_]+)/(?P<anotation_type>[0-9a-zA-Z_]+)/(?P<frame_index>[0-9]+)/$',
+        views.api.getLabelingData),
+
+    # download labeling data multiple frame
+    url(r'^api/labeling/data/$',
+        views.api.getLabelingDataByPost),
 
     # download labeling data multiple frame
     url(r'^api/labeling/(?P<bagid>[0-9a-zA-Z_]+)/(?P<start>[0-9]+)/(?P<end>[0-9]+)/$',
