@@ -188,6 +188,14 @@ def uploadLabelingIndexById(request):
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
+def uploadLabelingData(request):
+    print("before into %s" % request.method)
+    if request.method == 'PUT' and request is not None:
+        data_dict = request.data.dict()
+        return JsonResponse(db.upload_labeling_data(data_dict))
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
 def getLabelingIndexById(request, bagid, topic):
     if request.method == 'GET':
         return JsonResponse({'result': db.get_labeling_index_by_id(bagid, topic)})

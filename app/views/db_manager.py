@@ -671,6 +671,29 @@ class DBManager(object):
         print("done insert")
         return "done"
 
+    def upload_labeling_data(self, data_dict):
+        print("upload labeling time 111....")
+        result = {}
+        db_label_data = self.mongo_db["labeling_data"]
+
+        insert_data = dict()
+        insert_data["anotation"] = data_dict["annotationType"]
+        insert_data["index"] = data_dict["frameId"]
+        insert_data["bagid"] = data_dict["bagName"]
+        insert_data["data"] = data_dict["data"]
+
+        db_label_data.update(
+            {
+                "anotation": data_dict["annotationType"],
+                "index": data_dict["frameId"],
+                "bagid": data_dict["bagName"]
+            }, {
+                "$set": insert_data
+            }, True
+        )
+        print("done insert")
+        return "done"
+
     def get_labeling_data(self, bagid,  anotation_type, frame_index):
         result = []
         db_label_data = self.mongo_db["labeling_data"]
@@ -712,6 +735,7 @@ class DBManager(object):
 
 
 # task related
+
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -755,7 +779,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

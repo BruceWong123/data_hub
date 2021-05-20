@@ -155,7 +155,11 @@ urlpatterns = [
         views.api.getLabelingData),
 
     # download labeling data multiple frame
-    url(r'^api/labeling/data/$',
+    url(r'^api/labeling/data/upload/$',
+        views.api.uploadLabelingData),
+
+    # download labeling data multiple frame
+    url(r'^api/labeling/data/download/$',
         views.api.getLabelingDataByPost),
 
     # download labeling data multiple frame
