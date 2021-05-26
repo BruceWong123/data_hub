@@ -4,6 +4,8 @@ import os
 import json
 from pymongo import MongoClient
 
+import labeling.perception_labeling_rosbag_parser_pb2 as perception_labeling
+
 
 class Test_UPload:
     def __init__(self):

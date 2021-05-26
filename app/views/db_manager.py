@@ -676,17 +676,14 @@ class DBManager(object):
         result = {}
         db_label_data = self.mongo_db["labeling_data"]
 
+        frame_field = data_dict["frameFields"]
         insert_data = dict()
-        insert_data["anotation"] = data_dict["annotationType"]
-        insert_data["index"] = data_dict["frameId"]
-        insert_data["bagid"] = data_dict["bagName"]
-        insert_data["data"] = data_dict["data"]
+        insert_data[frame_field[0]] = data_dict["annotation"]
 
         db_label_data.update(
             {
-                "anotation": data_dict["annotationType"],
                 "index": data_dict["frameId"],
-                "bagid": data_dict["bagName"]
+                "bagid": data_dict["bagId"]
             }, {
                 "$set": insert_data
             }, True
@@ -708,15 +705,9 @@ class DBManager(object):
     def get_labeling_data_by_post(data_dict):
         result = []
         db_label_data = self.mongo_db["labeling_data"]
-        frame_id = data_dict["frameId"]
-        query_result = None
-        if isinstance(frame_id, list):
-            query_result = db_label_data.find({"bagid": data_dict["bagName"], "index": {
-                                              "$in": frame_id}, "anotation": data_dict["annotationType"]})
-        else:
-            query_result = db_label_data.find(
-                {"bagid": data_dict["bagName"], "index": data_dict["frameId"], "anotation": data_dict["annotationType"]})
 
+        query_result = db_label_data.find(
+            {"bagid": data_dict["bagId"], "index": data_dict["frameId"]})
         if query_result is not None:
             for x in query_result:
                 result.append(x)
@@ -735,7 +726,6 @@ class DBManager(object):
 
 
 # task related
-
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -779,6 +769,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
