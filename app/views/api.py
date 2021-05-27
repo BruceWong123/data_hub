@@ -163,7 +163,7 @@ def uploadTrajectoryInfoById(request):
         print("into put")
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_trajectoryinfo_by_id(request_dict.get("data"), request_dict.get("bagid")))
+        return JsonResponse(db.upload_trajectoryinfo_by_id(request_dict.get("data"), request_dict.get("bagid")), safe=False)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -172,7 +172,7 @@ def uploadTrajectoryAttri(request):
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_attri_by_id(request_dict.get("data"), request_dict.get("bagid")))
+        return JsonResponse(db.upload_attri_by_id(request_dict.get("data"), request_dict.get("bagid")), safe=False)
 
 
 # labeling related
@@ -184,7 +184,7 @@ def uploadLabelingIndexById(request):
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_labeling_index_by_id(request_dict.get("data"), request_dict.get("bagId")))
+        return JsonResponse(db.upload_labeling_index_by_id(request_dict.get("data"), request_dict.get("bagId")), safe=False)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
@@ -207,7 +207,7 @@ def uploadLabelingTimeById(request):
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_labeling_time_by_id(request_dict.get("data"), request_dict.get("bagId")))
+        return JsonResponse(db.upload_labeling_time_by_id(request_dict.get("data"), request_dict.get("bagId")), safe=False)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
