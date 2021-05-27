@@ -192,7 +192,7 @@ def uploadLabelingData(request):
     print("before into %s" % request.method)
     if request.method == 'PUT' and request is not None:
         data_dict = request.data.dict()
-        return JsonResponse(db.upload_labeling_data(data_dict))
+        return JsonResponse(db.upload_labeling_data(data_dict), safe=False)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

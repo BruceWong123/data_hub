@@ -678,7 +678,7 @@ class DBManager(object):
 
         frame_field = data_dict["frameFields"]
         insert_data = dict()
-        insert_data[frame_field[0]] = data_dict["data"]
+        insert_data[frame_field] = data_dict["data"]
 
         db_label_data.update(
             {

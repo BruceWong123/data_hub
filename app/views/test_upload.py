@@ -37,14 +37,14 @@ class Test_UPload:
         upload_url = service_end_point + "labeling/data/upload/"
 
         data_dict = {}
-        data_dict["data"] = "annotation"
+        data_dict["data"] = "annotation dfafasdf"
         data_dict["bagId"] = "YR_MKZ_1_20201207_022851_755_40"
 
         data_dict["frameId"] = 348
 
         frame_fields = []
 
-        frame_fields.append("test")
+        frame_fields.append("test2")
 
         data_dict["frameFields"] = frame_fields
 
