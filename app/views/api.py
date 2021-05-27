@@ -184,7 +184,7 @@ def uploadLabelingIndexById(request):
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_labeling_index_by_id(request_dict.get("data"), request_dict.get("bagid")))
+        return JsonResponse(db.upload_labeling_index_by_id(request_dict.get("data"), request_dict.get("bagId")))
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

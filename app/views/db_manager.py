@@ -614,7 +614,7 @@ class DBManager(object):
         print("upload labeling time 111....")
         result = {}
         db_label_data = self.mongo_db["labeling_time"]
-
+        insert_data = dict()
         insert_data["data"] = data
         db_label_data.update(
             {
