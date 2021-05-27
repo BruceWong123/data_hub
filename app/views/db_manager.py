@@ -659,9 +659,11 @@ class DBManager(object):
         print("done insert")
         return "done"
 
-    def upload_labeling_data(self, data_dict):
+    def upload_labeling_data(self, data):
         print("upload labeling time 111....")
         result = {}
+
+        data_dict = data.dict()
         db_label_data = self.mongo_db["labeling_data"]
 
         frame_field = data_dict["frameFields"]
@@ -690,14 +692,22 @@ class DBManager(object):
                 result.append(x)
         return str(result)
 
-    def get_labeling_data_by_post(data_dict):
+    def get_labeling_data_by_post(self, data_dict):
+        print("into get labeling")
         result = []
         db_label_data = self.mongo_db["labeling_data"]
 
+        frame_fields = data_dict.getlist("frameFields")
+
+        projection = dict()
+        for i, field in enumerate(frame_fields):
+            projection[field] = 1
+
         query_result = db_label_data.find(
-            {"bagid": data_dict["bagId"], "index": data_dict["frameId"]})
+            {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
         if query_result is not None:
             for x in query_result:
+
                 result.append(x)
         return str(result)
 

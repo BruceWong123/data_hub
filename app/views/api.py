@@ -224,10 +224,12 @@ def getLabelingData(request, bagid, anotation_type, frame_index):
 
 @ api_view(['GET', 'PUT', 'DELETE'])
 def getLabelingDataByPost(request):
-    if request.method == 'POST':
+    if request.method == 'PUT':
+
         if request.data is not None:
-            data_dict = request.data.dict()
-            return JsonResponse({'result': db.get_labeling_data_by_post(data_dict)})
+            print("into get labeling data")
+            print(request.data.dict())
+            return JsonResponse({'result': db.get_labeling_data_by_post(request.data)})
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

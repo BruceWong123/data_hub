@@ -102,6 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800
 # Internationalization

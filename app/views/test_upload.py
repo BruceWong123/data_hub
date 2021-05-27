@@ -6,6 +6,8 @@ from pymongo import MongoClient
 
 import labeling.perception_labeling_rosbag_parser_pb2 as perception_labeling
 
+from celery import Celery
+
 
 class Test_UPload:
     def __init__(self):
@@ -59,17 +61,22 @@ class Test_UPload:
         service_end_point = "http://127.0.0.1:8000/api/"
         upload_url = service_end_point + "labeling/data/download/"
 
-        data_dict = {}
-        data_dict["bagId"] = "YR_MKZ_1_20201207_022851_755_40"
+        data_dict = dict()
+        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2.bag"
 
-        data_dict["frameId"] = 348
+        data_dict["frameId"] = 0
 
         frame_fields = []
 
-        frame_fields.append("test222")
-        frame_fields.append("t")
+        frame_fields.append("_id")
+        frame_fields.append("index")
 
         data_dict["frameFields"] = frame_fields
+
+        print(data_dict)
+
+        array_test = data_dict["frameFields"]
+        print(array_test[0])
 
         session = requests.session()
         session.keep_alive = False
