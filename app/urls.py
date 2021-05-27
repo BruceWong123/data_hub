@@ -139,7 +139,7 @@ urlpatterns = [
         views.api.uploadLabelingTimeById),
 
     # download labeling data
-    url(r'^api/labeling/time/(?P<bagid>[0-9a-zA-Z_]+)/(?P<index>[0-9]+)/$',
+    url(r'^api/labeling/time/(?P<bagid>[0-9a-zA-Z_]+)/$',
         views.api.getLabelingTimeById),
 
     # upload labeling

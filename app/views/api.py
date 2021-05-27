@@ -207,13 +207,13 @@ def uploadLabelingTimeById(request):
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_labeling_time_by_id(request_dict.get("data"), request_dict.get("bagid")))
+        return JsonResponse(db.upload_labeling_time_by_id(request_dict.get("data"), request_dict.get("bagId")))
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
-def getLabelingTimeById(request, bagid, index):
+def getLabelingTimeById(request, bagid):
     if request.method == 'GET':
-        return JsonResponse({'result': db.get_labeling_time_by_id(bagid, index)})
+        return JsonResponse({'result': db.get_labeling_time_by_id(bagid)})
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

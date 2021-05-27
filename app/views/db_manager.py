@@ -598,13 +598,12 @@ class DBManager(object):
 
 # labeling related
 
-    def get_labeling_time_by_id(self, bagid, index):
+    def get_labeling_time_by_id(self, bagid):
         result = ""
         print("bagid ", bagid)
-        print("index ", index)
         db_label_data = self.mongo_db["labeling_time"]
         query_result = db_label_data.find(
-            {"bagid": bagid, "index": str(index)})
+            {"bagid": bagid})
 
         if query_result is not None:
             for x in query_result:
@@ -616,21 +615,15 @@ class DBManager(object):
         result = {}
         db_label_data = self.mongo_db["labeling_time"]
 
-        data = json.loads(data)
-
-        for key in data.keys():
-            insert_data = dict()
-            insert_data["index"] = key
-            insert_data["bagid"] = bagid
-            insert_data["data"] = data[key]
-            db_label_data.update(
-                {
-                    "index": key,
-                    "bagid": bagid
-                }, {
-                    "$set": insert_data
-                }, True
-            )
+        insert_data["data"] = data
+        db_label_data.update(
+            {
+                "index": key,
+                "bagId": bagid
+            }, {
+                "$set": insert_data
+            }, True
+        )
         print("done insert")
         return "done"
 
@@ -727,6 +720,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -769,7 +763,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
