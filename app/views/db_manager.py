@@ -650,7 +650,7 @@ class DBManager(object):
             insert_data["data"] = data[key]
             db_label_data.update(
                 {
-                    "topic": insert_key,
+                    "topic": key,
                     "bagId": bagid
                 }, {
                     "$set": insert_data
