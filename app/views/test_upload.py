@@ -32,6 +32,28 @@ class Test_UPload:
         session.put(url=upload_url, data=data_dict)
         print("upload done")
 
+    def upload_labeling_data(self):
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "labeling/data/upload/"
+
+        data_dict = {}
+        data_dict["data"] = "annotation"
+        data_dict["bagId"] = "YR_MKZ_1_20201207_022851_755_40"
+
+        data_dict["frameId"] = 348
+
+        frame_fields = []
+
+        frame_fields.append("test")
+
+        data_dict["frameFields"] = frame_fields
+
+        session = requests.session()
+        session.keep_alive = False
+        print("send request")
+        session.put(url=upload_url, data=data_dict)
+        print("done")
+
     def upload_attributes(self):
         service_end_point = "http://127.0.0.1:8000/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
@@ -102,5 +124,6 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    test.upload_labeling()
+    # test.upload_labeling()
+    test.upload_labeling_data()
     # test.test_mongo()
