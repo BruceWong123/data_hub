@@ -618,7 +618,6 @@ class DBManager(object):
         insert_data["data"] = data
         db_label_data.update(
             {
-                "index": key,
                 "bagId": bagid
             }, {
                 "$set": insert_data
@@ -645,18 +644,14 @@ class DBManager(object):
         data = json.loads(data)
 
         for key in data.keys():
-            insert_key = key.replace("/", "_")
-            print(len(insert_key))
-            insert_key = insert_key[1: len(insert_key)]
-            print("insert ", insert_key)
             insert_data = dict()
-            insert_data["topic"] = insert_key
-            insert_data["bagid"] = bagid
+            insert_data["topic"] = key
+            insert_data["bagId"] = bagid
             insert_data["data"] = data[key]
             db_label_data.update(
                 {
                     "topic": insert_key,
-                    "bagid": bagid
+                    "bagId": bagid
                 }, {
                     "$set": insert_data
                 }, True
