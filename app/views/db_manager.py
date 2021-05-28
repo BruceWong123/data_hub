@@ -702,6 +702,7 @@ class DBManager(object):
         projection = dict()
         for i, field in enumerate(frame_fields):
             projection[field] = 1
+        projection['_id'] = 0
 
         query_result = db_label_data.find(
             {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
@@ -709,6 +710,7 @@ class DBManager(object):
             for x in query_result:
 
                 result.append(x)
+        print(result)
         return str(result)
 
     def get_multi_labelinginfo_by_id(self, bagid, start, end):
