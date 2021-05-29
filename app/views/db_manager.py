@@ -663,12 +663,15 @@ class DBManager(object):
         print("upload labeling time 111....")
         result = {}
 
-        data_dict = data.dict()
+        data_dict = data
         db_label_data = self.mongo_db["labeling_data"]
 
         frame_field = data_dict["frameFields"]
         insert_data = dict()
         insert_data[frame_field] = data_dict["data"]
+
+        print("insert data")
+        print(insert_data)
 
         db_label_data.update(
             {

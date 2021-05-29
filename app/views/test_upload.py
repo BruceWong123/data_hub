@@ -7,6 +7,7 @@ from pymongo import MongoClient
 import labeling.perception_labeling_rosbag_parser_pb2 as perception_labeling
 
 from celery import Celery
+import requests
 
 
 class Test_UPload:
@@ -35,20 +36,23 @@ class Test_UPload:
         print("upload done")
 
     def upload_labeling_data(self):
-        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/upload/"
 
         data_dict = {}
-        data_dict["data"] = "annotation dfafasdf"
-        data_dict["bagId"] = "YR_MKZ_1_20201207_022851_755_40"
+        data_dict["data"] = "annotation dfa222fffffasdf"
+        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2.bag"
 
-        data_dict["frameId"] = 348
+        data_dict["frameId"] = 1
 
         frame_fields = []
 
-        frame_fields.append("test222")
+        frame_fields.append("object_1d")
 
         data_dict["frameFields"] = frame_fields
+
+        print(data_dict)
 
         session = requests.session()
         session.keep_alive = False
@@ -143,6 +147,9 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    # test.upload_labeling()
-    test.download_labeling_data()
+    test.upload_labeling_data()
+    # test.download_labeling_data()
     # test.test_mongo()
+    print("try to get")
+    # body = requests.get("http://www.baidu.com")
+    # print(body)
