@@ -629,7 +629,7 @@ class DBManager(object):
     def get_labeling_index_by_id(self, bagid, topic):
         result = ""
         db_label_data = self.mongo_db["labeling_index"]
-        query_result = db_label_data.find({"bagid": bagid, "topic": topic})
+        query_result = db_label_data.find({"bagId": bagid, "topic": topic})
 
         if query_result is not None:
             for x in query_result:
@@ -730,7 +730,6 @@ class DBManager(object):
 
 # task related
 
-
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -773,6 +772,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
