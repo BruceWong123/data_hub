@@ -36,8 +36,8 @@ class Test_UPload:
         print("upload done")
 
     def upload_labeling_data(self):
-        service_end_point = "http://127.0.0.1:8000/api/"
-        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/upload/"
 
         data_dict = {}
@@ -48,7 +48,7 @@ class Test_UPload:
 
         frame_fields = []
 
-        frame_fields.append("object_1d")
+        frame_fields.append("object_2d")
 
         data_dict["frameFields"] = frame_fields
 
