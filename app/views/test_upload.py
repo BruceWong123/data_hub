@@ -36,24 +36,18 @@ class Test_UPload:
         print("upload done")
 
     def upload_labeling_data(self):
-        # service_end_point = "http://127.0.0.1:8000/api/"
-        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/upload/"
-
         data_dict = {}
         data_dict["data"] = "annotation dfa222fffffasdf"
         data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2.bag"
-
         data_dict["frameId"] = 1
-
+        data_dict["timestamp"] = "testtimestamp"
         frame_fields = []
-
         frame_fields.append("object_2d")
-
         data_dict["frameFields"] = frame_fields
-
         print(data_dict)
-
         session = requests.session()
         session.keep_alive = False
         print("send request")

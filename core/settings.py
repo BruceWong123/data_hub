@@ -71,17 +71,25 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'OPTIONS': {
+#             'read_default_file': '/etc/mysql/my.cnf',
+#         },
+#         'NAME': 'data_hub',
+#         'USER': 'deep2',
+#         'PASSWORD': 'route',
+#         'HOST': '10.9.9.9',
+#         'PORT': '30009',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
-        },
-        'NAME': 'data_hub',
-        'USER': 'deep2',
-        'PASSWORD': 'route',
-        'HOST': '10.9.9.9',
-        'PORT': '30009',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db_dev.sqlite3'),
     }
 }
 

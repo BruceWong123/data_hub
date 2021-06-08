@@ -669,6 +669,7 @@ class DBManager(object):
         frame_field = data_dict["frameFields"]
         insert_data = dict()
         insert_data[frame_field] = data_dict["data"]
+        insert_data["timestamp"] = data_dict["timestamp"]
 
         print("insert data")
         print(insert_data)
@@ -730,6 +731,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -772,7 +774,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
