@@ -697,7 +697,7 @@ class DBManager(object):
         return str(result)
 
     def get_labeling_data_by_post(self, data_dict):
-        print("into get labeling")
+        print("into get labeling  333333")
         result = []
         db_label_data = self.mongo_db["labeling_data"]
 
@@ -709,7 +709,7 @@ class DBManager(object):
         projection['_id'] = 0
         query_result = {}
 
-        if data_dict["timestamp"] is None:
+        if not hasattr(data_dict, "timestamp"):
             query_result = db_label_data.find(
                 {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
         else:
