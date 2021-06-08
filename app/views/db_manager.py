@@ -707,9 +707,14 @@ class DBManager(object):
         for i, field in enumerate(frame_fields):
             projection[field] = 1
         projection['_id'] = 0
+        query_result = {}
 
-        query_result = db_label_data.find(
-            {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
+        if data_dict["timestamp"] is None:
+            query_result = db_label_data.find(
+                {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
+        else:
+            query_result = db_label_data.find(
+                {"bagid": data_dict["bagId"], "timestamp": data_dict["timestamp"]}, projection)
         if query_result is not None:
             for x in query_result:
 
@@ -730,7 +735,6 @@ class DBManager(object):
 
 
 # task related
-
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -774,6 +778,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
