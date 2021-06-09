@@ -741,7 +741,7 @@ class DBManager(object):
         projection['_id'] = 0
         query_result = {}
         data_dict = data_dict.dict()
-        if data_dict["timestamp"] == 0:
+        if data_dict["timestamp"] == '0':
             query_result = db_label_data.find(
                 {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
         else:
@@ -765,7 +765,6 @@ class DBManager(object):
 
 
 # task related
-
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -809,6 +808,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

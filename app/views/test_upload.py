@@ -36,8 +36,8 @@ class Test_UPload:
         print("upload done")
 
     def upload_labeling_data(self):
-        service_end_point = "http://127.0.0.1:8000/api/"
-        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/first_upload/"
         data_dict = {}
         data_dict["data"] = "annotation dfa222fffffasdf"
@@ -55,14 +55,14 @@ class Test_UPload:
         print("done")
 
     def download_labeling_data(self):
-        #service_end_point = "http://127.0.0.1:8000/api/"
-        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/download/"
 
         data_dict = dict()
         data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2"
         data_dict["frameId"] = 0
-        data_dict["timestamp"] = "1584360163550000"
+        data_dict["timestamp"] = "0"
         frame_fields = []
         frame_fields.append("object_3d")
         data_dict["frameFields"] = frame_fields
@@ -142,8 +142,8 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    test.upload_labeling_data()
-    # test.download_labeling_data()
+    # test.upload_labeling_data()
+    test.download_labeling_data()
     # test.test_mongo()
     print("try to get")
     # body = requests.get("http://www.baidu.com")
