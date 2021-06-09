@@ -60,9 +60,9 @@ class Test_UPload:
         upload_url = service_end_point + "labeling/data/download/"
 
         data_dict = dict()
-        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2.bag"
-        data_dict["frameId"] = 0
-        # data_dict["timestamp"] = "testtest"
+        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2"
+        # data_dict["frameId"] = 0
+        data_dict["timestamp"] = "1584360163550000"
         frame_fields = []
         frame_fields.append("object_3d")
         data_dict["frameFields"] = frame_fields

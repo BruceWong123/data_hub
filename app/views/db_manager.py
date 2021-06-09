@@ -697,7 +697,7 @@ class DBManager(object):
         return str(result)
 
     def get_labeling_data_by_post(self, data_dict):
-        print("into get labeling  333333")
+        print("into get labeling  @@@@@@")
         result = []
         db_label_data = self.mongo_db["labeling_data"]
 
@@ -708,8 +708,8 @@ class DBManager(object):
             projection[field] = 1
         projection['_id'] = 0
         query_result = {}
-
-        if not hasattr(data_dict, "timestamp"):
+        data_dict = data_dict.dict()
+        if data_dict["timestamp"] is None:
             query_result = db_label_data.find(
                 {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
         else:
@@ -735,6 +735,7 @@ class DBManager(object):
 
 
 # task related
+
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -778,7 +779,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
