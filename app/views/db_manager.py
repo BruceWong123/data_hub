@@ -659,6 +659,31 @@ class DBManager(object):
         print("done insert")
         return "done"
 
+    def upload_labeling_data_init(self, data):
+        print("upload labeling time 111....")
+        result = {}
+
+        data_dict = data
+        db_label_data = self.mongo_db["labeling_data"]
+
+        data_dict = data_dict.dict()
+        frame_field = data_dict["frameFields"]
+        insert_data = dict()
+        insert_data[frame_field] = data_dict["data"]
+
+        db_label_data.update(
+            {
+                "timestamp": data_dict["timestamp"],
+                "index": data_dict["frameId"],
+                "bagid": data_dict["bagId"]
+            }, {
+                "$set": insert_data
+            }, True
+        )
+
+        print("done insert")
+        return "done"
+
     def upload_labeling_data(self, data):
         print("upload labeling time 111....")
         result = {}
@@ -666,22 +691,31 @@ class DBManager(object):
         data_dict = data
         db_label_data = self.mongo_db["labeling_data"]
 
+        data_dict = data_dict.dict()
         frame_field = data_dict["frameFields"]
         insert_data = dict()
         insert_data[frame_field] = data_dict["data"]
-        insert_data["timestamp"] = data_dict["timestamp"]
 
         print("insert data")
-        print(insert_data)
+        if data_dict["timestamp"] == 0:
+            db_label_data.update(
+                {
+                    "index": data_dict["frameId"],
+                    "bagid": data_dict["bagId"]
+                }, {
+                    "$set": insert_data
+                }, True
+            )
+        else:
+            db_label_data.update(
+                {
+                    "timestamp": data_dict["timestamp"],
+                    "bagid": data_dict["bagId"]
+                }, {
+                    "$set": insert_data
+                }, True
+            )
 
-        db_label_data.update(
-            {
-                "index": data_dict["frameId"],
-                "bagid": data_dict["bagId"]
-            }, {
-                "$set": insert_data
-            }, True
-        )
         print("done insert")
         return "done"
 
@@ -709,7 +743,7 @@ class DBManager(object):
         projection['_id'] = 0
         query_result = {}
         data_dict = data_dict.dict()
-        if data_dict["timestamp"] is None:
+        if data_dict["timestamp"] == 0:
             query_result = db_label_data.find(
                 {"bagid": data_dict["bagId"], "index": data_dict["frameId"]}, projection)
         else:
@@ -717,9 +751,7 @@ class DBManager(object):
                 {"bagid": data_dict["bagId"], "timestamp": data_dict["timestamp"]}, projection)
         if query_result is not None:
             for x in query_result:
-
                 result.append(x)
-        print(result)
         return str(result)
 
     def get_multi_labelinginfo_by_id(self, bagid, start, end):
@@ -735,7 +767,6 @@ class DBManager(object):
 
 
 # task related
-
 
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
@@ -779,6 +810,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
