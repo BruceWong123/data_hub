@@ -695,7 +695,7 @@ class DBManager(object):
         insert_data[frame_field] = data_dict["data"]
 
         print("insert data")
-        if data_dict["timestamp"] == 0:
+        if data_dict["timestamp"] == "0":
             db_label_data.update(
                 {
                     "index": data_dict["frameId"],
@@ -766,6 +766,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -808,7 +809,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

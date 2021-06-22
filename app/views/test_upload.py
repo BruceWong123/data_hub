@@ -8,6 +8,7 @@ import labeling.perception_labeling_rosbag_parser_pb2 as perception_labeling
 
 from celery import Celery
 import requests
+import base64
 
 
 class Test_UPload:
@@ -35,7 +36,7 @@ class Test_UPload:
         session.put(url=upload_url, data=data_dict)
         print("upload done")
 
-    def upload_labeling_data(self):
+    def upload_labeling_data2(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/first_upload/"
@@ -54,9 +55,29 @@ class Test_UPload:
         session.put(url=upload_url, data=data_dict)
         print("done")
 
-    def download_labeling_data(self):
+    def upload_labeling_data(self):
         service_end_point = "http://127.0.0.1:8000/api/"
+
         # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "labeling/data/upload/"
+        data_dict = {}
+        data_dict["data"] = "annotation dfa222fffffasdf"
+        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2"
+        data_dict["frameId"] = 98
+        data_dict["timestamp"] = "0"
+        frame_fields = []
+        frame_fields.append("object_2d")
+        data_dict["frameFields"] = frame_fields
+        print(data_dict)
+        session = requests.session()
+        session.keep_alive = False
+        print("send request")
+        session.put(url=upload_url, data=data_dict)
+        print("done")
+
+    def download_labeling_data(self):
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/download/"
 
         data_dict = dict()
@@ -142,8 +163,8 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    # test.upload_labeling_data()
-    test.download_labeling_data()
+    test.upload_labeling_data()
+    # test.download_labeling_data()
     # test.test_mongo()
     print("try to get")
     # body = requests.get("http://www.baidu.com")
