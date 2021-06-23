@@ -516,8 +516,9 @@ class DBManager(object):
         result = {}
         db_traj_data = self.mongo_db["trajectories"]
 
-        proto_format = PredictionObstacles()
-        prediction_objects = text.Parse(data, proto_format)
+        prediction_objects = PredictionObstacles()
+        prediction_objects.ParseFromString(
+            base64.b64decode(data.encode('utf-8')))
 
         timestamp = prediction_objects.time_measurement
         for prediction_object in prediction_objects.prediction_obstacle:
@@ -574,25 +575,22 @@ class DBManager(object):
         # print("upload done")
         return result
 
-    def upload_attri_by_id(self, data, bagid):
+    def upload_attri_by_id(self, data):
         print("upload labeling 111....")
         result = {}
         db_attri_data = self.mongo_db["features"]
 
-        print(bagid)
-
         data = json.loads(data)
-        print(data)
-
-        for key in data.keys():
-            print(key)
-            print(data[key])
-            db_attri_data.update(
-                {
-                    "timestamp": key,
-                    "bag_name": bagid
-                }, data[key], True
-            )
+        print(data["timestamp"])
+        print(data["bag_name"])
+        db_attri_data.update(
+            {
+                "timestamp": data["timestamp"],
+                "bag_name": data["bag_name"]
+            }, {
+                "$set": data
+            }, True
+        )
         print("done insert")
         return "done"
 

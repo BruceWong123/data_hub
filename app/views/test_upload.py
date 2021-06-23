@@ -95,12 +95,11 @@ class Test_UPload:
 
     def upload_attributes(self):
         service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
 
-        data = "{ \"1580604434350000\":{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_40\", \"timestamp\": 1580604434350000, \"ids\": [], \"turn\": [], \"is_still\": [1], \"on_lane\": [1], \"lane_change\": [], \"on_crosswalk\": [], \"in_junction\": []}}"
-
+        data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_43\", \"timestamp\": \"1580604434350000\", \"ids\": [], \"turn\": [], \"is_still\": [1], \"on_lane\": [1], \"lane_change\": [], \"on_crosswalk\": [], \"in_junction\": []}"
         data_dict = {}
-        data_dict["bagid"] = "YR_MKZ_1_20201207_022851_755_40"
         data_dict["data"] = data
         session = requests.session()
         session.keep_alive = False
@@ -109,7 +108,8 @@ class Test_UPload:
         print("upload done")
 
     def upload_trajectory(self, filename):
-        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/upload/"
 
         data = ""
@@ -163,7 +163,7 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    test.upload_labeling_data()
+    test.upload_attributes()
     # test.download_labeling_data()
     # test.test_mongo()
     print("try to get")
