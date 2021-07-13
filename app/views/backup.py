@@ -45,7 +45,7 @@ class DBManager(object):
 
     def connect_to_mongodb(self):
         host = self.config.get("MongoDB", "host")
-        if host == "10.10.12.21":
+        if host == "10.3.3.45":
             logger.info("use cloud mongodb")
         elif host == "10.9.9.9":
             logger.info("use infra mongodb")
