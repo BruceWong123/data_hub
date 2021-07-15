@@ -21,6 +21,7 @@ from app.views.traj.handle_attribute import handle_attribute
 from app.views.traj.map_api import HDMap
 from app.views.deeproute_perception_obstacle_pb2 import PerceptionObstacles
 from app.views.deeproute_prediction_obstable_pb2 import PredictionObstacles
+from urllib.parse import quote_plus
 logger = logging.getLogger('django')
 
 
@@ -44,6 +45,7 @@ class DBManager(object):
         print(self.redis_cli.get('test'))
 
     def connect_to_mongodb(self):
+        print("into connect to mongo")
         host = self.config.get("MongoDB", "host")
         if host == "10.3.3.45":
             logger.info("use cloud mongodb")
@@ -55,11 +57,20 @@ class DBManager(object):
         password = urllib.parse.quote_plus(
             self.config.get("MongoDB", "password"))
         authSource = "datahub"
+        print("usename %s ", username)
+        print("password %s ", password)
+        print("host %s ", host)
+        # self.my_mongo_client = MongoClient(
+        #     "mongodb://%s:%s@%s:%s/%s" % (quote_plus('root'),
+        #                                   quote_plus('iRJL3pbj05o0X3Y='), host, port, authSource)
+        # )
+
+        # self.mongo_db = self.my_mongo_client[database]
+
         self.my_mongo_client = MongoClient(
-            "mongodb://%s:%s@%s:%s/%s" % ('deep',
-                                          'route', host, port, authSource)
-        )
-        self.mongo_db = self.my_mongo_client[database]
+            'mongodb://root:iRJL3pbj05o0X3Y=@10.3.3.45:27017/datahub?authSource=admin')
+        self.mongo_db = self.my_mongo_client['datahub']
+
         print(
             "Successfully connected to Mongo : %s"
             % self.my_mongo_client.list_database_names()
@@ -764,7 +775,6 @@ class DBManager(object):
 
 # task related
 
-
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -807,6 +817,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
