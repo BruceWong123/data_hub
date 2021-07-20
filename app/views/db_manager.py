@@ -133,6 +133,7 @@ class DBManager(object):
         bag_ids = db_traj_data.distinct("bagid")
         result = []
         for bag_id in bag_ids:
+            print(bag_id)
             result.append(bag_id)
         return str(result)
 
@@ -500,8 +501,24 @@ class DBManager(object):
         timestamp = int(timestamp)
         objectid = int(objectid)
         seqlen = int(seqlen)
+        projection = dict()
+        projection['_id'] = 0
+        projection['bagid'] = 0
+        projection['perception_object_id'] = 0
+        projection['timestamp'] = 0
+        projection['l'] = 0
+        projection['w'] = 0
+        projection['h'] = 0
+        projection['theta'] = 0
+        projection['v_x'] = 0
+        projection['v_y'] = 0
+        projection['a_x'] = 0
+        projection['a_y'] = 0
+        projection['lane_id'] = 0
+        projection['preception_object_type'] = 0
+        projection['is_still'] = 0
         query_result = db_traj_data.find(
-            {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}).limit(seqlen)
+            {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
         result = []
         if query_result is not None:
             for x in query_result:
@@ -775,6 +792,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -817,7 +835,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
