@@ -563,14 +563,14 @@ class DBManager(object):
         projection['is_still'] = 0
         result = []
 
-        for i in range(100):
-            query_result = db_traj_data.find(
-                {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
+        # for i in range(100):
+        query_result = db_traj_data.find(
+            {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
 
-            if query_result is not None:
-                logger.info(x)
-                for x in query_result:
-                    result.append(x)
+        if query_result is not None:
+            logger.info(x)
+            for x in query_result:
+                result.append(x)
         return str(result)
 
     def get_multi_trajectory_data(self, bagid, start_time, end_time, objectid, seqlen):
