@@ -121,6 +121,12 @@ def getTrajectoryData(request, bagid, timestamp, objectid, seqlen):
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])
+def getTrajectoryDataByAttribute(request, attribute, seqlen):
+    if request.method == 'GET':
+        return JsonResponse({'result': db.get_trajectory_data_by_attribute(attribute, seqlen)})
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
 def getMultiTrajectoryData(request, bagid, start_time, end_time, objectid, seqlen):
     if request.method == 'GET':
         return JsonResponse({'result': db.get_multi_trajectory_data(bagid, start_time, end_time, objectid, seqlen)})

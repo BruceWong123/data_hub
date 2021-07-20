@@ -528,6 +528,49 @@ class DBManager(object):
                     result.append(x)
         return str(result)
 
+    def get_trajectory_data_by_attribute(self, attribute, seqlen):
+
+        db_attribute_data = self.mongo_db["features"]
+        query_result = db_attribute_data.find({attribute: "true"}).limit(1)
+        timestamp = -1
+        objectid = -1
+        bagid = null
+        if query_result is not None:
+            for x in query_result:
+                print(x)
+                timestamp = int(x["timestamp"])
+                objectid = int(x["object_id"])
+                bagid = x["bag_name"]
+        db_traj_data = self.mongo_db["trajectories"]
+
+        seqlen = int(seqlen)
+        projection = dict()
+        projection['_id'] = 0
+        projection['bagid'] = 0
+        projection['perception_object_id'] = 0
+        projection['timestamp'] = 0
+        projection['l'] = 0
+        projection['w'] = 0
+        projection['h'] = 0
+        projection['theta'] = 0
+        projection['v_x'] = 0
+        projection['v_y'] = 0
+        projection['a_x'] = 0
+        projection['a_y'] = 0
+        projection['lane_id'] = 0
+        projection['preception_object_type'] = 0
+        projection['is_still'] = 0
+        result = []
+
+        for i in range(100):
+            query_result = db_traj_data.find(
+                {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
+
+            if query_result is not None:
+                for x in query_result:
+                    result.append(x)
+        return str(result)
+
     def get_multi_trajectory_data(self, bagid, start_time, end_time, objectid, seqlen):
         db_traj_data = self.mongo_db["trajectories"]
         start_time = int(start_time)
@@ -797,6 +840,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -839,7 +883,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

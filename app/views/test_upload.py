@@ -93,22 +93,14 @@ class Test_UPload:
         result = session.put(url=upload_url, data=data_dict)
         print(result)
 
-    def download_trajectory_data2(self):
+    def download_trajectory_data(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
-        upload_url = service_end_point + "labeling/data/download/"
-
-        data_dict = dict()
-        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2"
-        data_dict["frameId"] = 0
-        data_dict["timestamp"] = "0"
-        frame_fields = []
-        frame_fields.append("object_3d")
-        data_dict["frameFields"] = frame_fields
+        upload_url = service_end_point + "trajectory/data/is_still/50/"
 
         session = requests.session()
         session.keep_alive = False
-        result = session.put(url=upload_url, data=data_dict)
+        result = session.get(url=upload_url)
         print(result)
 
     def upload_attributes(self):
@@ -116,7 +108,7 @@ class Test_UPload:
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
 
-        data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_43\", \"timestamp\": \"1580604434350000\", \"object_id\": \"1234\", \"turn\": 'false', \"is_still\": 'true', \"on_lane\": 'false', \"lane_change\": 'true', \"on_crosswalk\": 'true', \"in_junction\": 'false'}"
+        data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_43\", \"timestamp\": \"1580604434350000\", \"object_id\": \"1234\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}"
         data_dict = {}
         data_dict["data"] = data
         session = requests.session()
@@ -181,7 +173,8 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    test.upload_attributes()
+    # test.upload_attributes()
+    test.download_trajectory_data()
     # test.download_labeling_data()
     # test.test_mongo()
     print("try to get")
