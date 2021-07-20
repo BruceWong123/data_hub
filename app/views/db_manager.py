@@ -517,12 +517,15 @@ class DBManager(object):
         projection['lane_id'] = 0
         projection['preception_object_type'] = 0
         projection['is_still'] = 0
-        query_result = db_traj_data.find(
-            {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
         result = []
-        if query_result is not None:
-            for x in query_result:
-                result.append(x)
+
+        for i in range(100):
+            query_result = db_traj_data.find(
+                {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
+
+            if query_result is not None:
+                for x in query_result:
+                    result.append(x)
         return str(result)
 
     def get_multi_trajectory_data(self, bagid, start_time, end_time, objectid, seqlen):
