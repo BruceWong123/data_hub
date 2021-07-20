@@ -612,9 +612,9 @@ class DBManager(object):
         db_attri_data = self.mongo_db["features"]
 
         data = json.loads(data)
-        print(data["timestamp"])
-        print(data["bag_name"])
-        print(data["object_id"])
+        logger.info(data["timestamp"])
+        logger.info(data["bag_name"])
+        logger.info(data["object_id"])
         db_attri_data.update(
             {
                 "timestamp": data["timestamp"],

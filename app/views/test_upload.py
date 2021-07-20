@@ -92,7 +92,8 @@ class Test_UPload:
         session.keep_alive = False
         result = session.put(url=upload_url, data=data_dict)
         print(result)
-     def download_trajectory_data(self):
+
+    def download_trajectory_data2(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/download/"
@@ -111,8 +112,8 @@ class Test_UPload:
         print(result)
 
     def upload_attributes(self):
-        service_end_point = "http://127.0.0.1:8000/api/"
-        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
 
         data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_43\", \"timestamp\": \"1580604434350000\", \"object_id\": \"1234\", \"turn\": 'false', \"is_still\": 'true', \"on_lane\": 'false', \"lane_change\": 'true', \"on_crosswalk\": 'true', \"in_junction\": 'false'}"
