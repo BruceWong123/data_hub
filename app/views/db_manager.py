@@ -529,15 +529,16 @@ class DBManager(object):
         return str(result)
 
     def get_trajectory_data_by_attribute(self, attribute, seqlen):
-
+        logger.info(attribute)
+        logger.info(seqlen)
         db_attribute_data = self.mongo_db["features"]
         query_result = db_attribute_data.find({attribute: "true"}).limit(1)
         timestamp = -1
         objectid = -1
-        bagid = null
+        bagid = "xxx"
         if query_result is not None:
             for x in query_result:
-                print(x)
+                logger.info(x)
                 timestamp = int(x["timestamp"])
                 objectid = int(x["object_id"])
                 bagid = x["bag_name"]
@@ -567,6 +568,7 @@ class DBManager(object):
                 {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
 
             if query_result is not None:
+                logger.info(x)
                 for x in query_result:
                     result.append(x)
         return str(result)
