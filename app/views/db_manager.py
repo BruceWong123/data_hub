@@ -614,10 +614,12 @@ class DBManager(object):
         data = json.loads(data)
         print(data["timestamp"])
         print(data["bag_name"])
+        print(data["object_id"])
         db_attri_data.update(
             {
                 "timestamp": data["timestamp"],
-                "bag_name": data["bag_name"]
+                "bag_name": data["bag_name"],
+                "object_id": data["object_id"]
             }, {
                 "$set": data
             }, True
@@ -795,7 +797,6 @@ class DBManager(object):
 
 # task related
 
-
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -838,6 +839,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
