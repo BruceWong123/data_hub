@@ -610,7 +610,7 @@ class DBManager(object):
         print("upload labeling 111....")
         result = {}
         db_attri_data = self.mongo_db["features"]
-
+        logger.info(data)
         data = json.loads(data)
         logger.info(data["timestamp"])
         logger.info(data["bag_name"])
