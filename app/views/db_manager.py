@@ -532,7 +532,7 @@ class DBManager(object):
         logger.info(seqlen)
         db_attribute_data = self.mongo_db["features"]
         query_result = db_attribute_data.find(
-            {attribute: "true"}).limit(seqnum)
+            {attribute: "true"}).limit(int(seqnum))
         timestamp = -1
         objectid = -1
         bagid = "xxx"
