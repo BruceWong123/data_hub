@@ -108,7 +108,7 @@ class Test_UPload:
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
 
-        data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_40\", \"timestamp\": \"1580604434250000\", \"object_id\": \"32663\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}"
+        data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_40\", \"timestamp\": \"1580604438250000\", \"object_id\": \"32663\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}"
         data_dict = {}
         data_dict["data"] = data
         session = requests.session()
@@ -173,8 +173,8 @@ class Test_UPload:
 
 if __name__ == '__main__':
     test = Test_UPload()
-    # test.upload_attributes()
-    test.download_trajectory_data()
+    test.upload_attributes()
+    # test.download_trajectory_data()
     # test.download_labeling_data()
     # test.test_mongo()
     print("try to get")

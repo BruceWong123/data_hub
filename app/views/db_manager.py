@@ -572,7 +572,7 @@ class DBManager(object):
                     for x in query_result:
                         logger.info(x)
                         result.append(x)
-            final_result.append(result)
+                    final_result.append(result)
         return str(final_result)
 
     def get_trajectory_data_by_attribute(self, attribute, seqlen):
