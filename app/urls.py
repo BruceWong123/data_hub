@@ -130,6 +130,10 @@ urlpatterns = [
     url(r'^api/trajectory/data/(?P<attribute>[a-zA-Z_]+)/(?P<seqlen>[0-9]+)/$',
         views.api.getTrajectoryDataByAttribute),
 
+    # download single frame trajectory by attribute
+    url(r'^api/trajectory/data/(?P<attribute>[a-zA-Z_]+)/(?P<seqlen>[0-9]+)/(?P<seqnum>[0-9]+)/$',
+        views.api.getMultipleTrajectoryDataByAttribute),
+
     # download multiple frame trajectory
     url(r'^api/trajectory/data/(?P<bagid>[0-9a-zA-Z_]+)/(?P<start_time>[0-9]+)/(?P<end_time>[0-9]+)/(?P<objectid>[0-9]+)/(?P<seqlen>[0-9]+)/$',
         views.api.getMultiTrajectoryData),
