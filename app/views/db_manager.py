@@ -650,6 +650,8 @@ class DBManager(object):
                 {"bagid": bagid, "timestamp": timestamp, "perception_object_id": obj_id})
 
             if query_result is None:
+                traj["bagid"] = bagid
+                traj['perception_object_id'] = obj_id
                 db_traj_data.insert_one(traj)
             else:
                 db_traj_data.update(
