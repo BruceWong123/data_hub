@@ -636,6 +636,7 @@ class DBManager(object):
 
     def upload_trajectoryinfo_by_dict(self, data, bagid):
         print("uploading....")
+        logger.info("into upload trajectory by dict")
         result = {}
         db_traj_data = self.mongo_db["trajectories"]
 
@@ -644,6 +645,7 @@ class DBManager(object):
         bagid = traj["bagId"]
         traj_data = data["trajectory"]
         for traj in traj_data:
+            logger.info(traj)
             timestamp = traj["timestamp"]
             query_result = db_traj_data.find_one(
                 {"bagid": bagid, "timestamp": timestamp, "perception_object_id": obj_id})
