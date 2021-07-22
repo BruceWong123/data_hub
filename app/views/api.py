@@ -175,7 +175,7 @@ def uploadTrajectoryInfoByDict(request):
         print("into put")
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_trajectoryinfo_by_dict(request_dict.get("data"), request_dict.get("bagid")), safe=False)
+        return JsonResponse(db.upload_trajectoryinfo_by_dict(request_dict.get("data"), request_dict.get("bagId")), safe=False)
 
 
 @ api_view(['GET', 'PUT', 'DELETE'])

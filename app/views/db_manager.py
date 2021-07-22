@@ -642,7 +642,6 @@ class DBManager(object):
 
         data = json.loads(data)
         obj_id = data["object_id"]
-        bagid = data["bagId"]
         traj_data = data["trajectory"]
         for traj in traj_data:
             logger.info(traj)
@@ -916,6 +915,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -958,7 +958,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

@@ -147,7 +147,7 @@ class Test_UPload:
 
         data_dict = {}
         data_dict["data"] = data
-        data_dict["dagId"] = "test_test_test_test_test"
+        data_dict["bagId"] = "test_test_test_test_test"
         session = requests.session()
         session.keep_alive = False
         # print(data)
