@@ -89,8 +89,12 @@ urlpatterns = [
         views.api.getTrajectoryInfoById),
 
     # upload trajectory
+    # url(r'^api/trajectory/upload/$',
+    #     views.api.uploadTrajectoryInfoById),
+
+    # upload trajectory
     url(r'^api/trajectory/upload/$',
-        views.api.uploadTrajectoryInfoById),
+        views.api.uploadTrajectoryInfoByDict),
 
 
     # evaluate trajectory

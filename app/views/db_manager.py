@@ -634,6 +634,31 @@ class DBManager(object):
                 result.append(x)
         return str(result)
 
+    def upload_trajectoryinfo_by_dict(self, data, bagid):
+        print("uploading....")
+        result = {}
+        db_traj_data = self.mongo_db["trajectories"]
+
+        data = json.loads(data)
+        obj_id = data["object_id"]
+        bagid = traj["bagId"]
+        traj_data = data["trajectory"]
+        for traj in traj_data:
+            timestamp = traj["timestamp"]
+            query_result = db_traj_data.find_one(
+                {"bagid": bagid, "timestamp": timestamp, "perception_object_id": obj_id})
+
+            if query_result is None:
+                db_traj_data.insert_one(traj)
+            else:
+                db_traj_data.update(
+                    {
+                        "_id": query_result.get('_id')
+                    }, {
+                        "$set": traj
+                    }
+                )
+
     def upload_trajectoryinfo_by_id(self, data, bagid):
         print("uploading....")
         result = {}
