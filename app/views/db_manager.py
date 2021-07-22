@@ -642,7 +642,7 @@ class DBManager(object):
 
         data = json.loads(data)
         obj_id = data["object_id"]
-        bagid = traj["bagId"]
+        bagid = data["bagId"]
         traj_data = data["trajectory"]
         for traj in traj_data:
             logger.info(traj)
