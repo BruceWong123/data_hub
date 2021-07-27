@@ -669,18 +669,15 @@ class DBManager(object):
             ).upsert().update({
                 "$set": traj
             })
-        time_end1 = time.clock()
         timeend1 = time.time()
+
+        logger(time_start)
         bulk.execute()
-        time_end2 = time.clock()
+        logger(time_start)
         timeend2 = time.time()
         logger.info("insert done")
-        time_cost1 = time_end1 - time_start
         timecost1 = timeend1 - timestart
-        time_cost2 = time_end2 - time_end1
         timecost2 = timeend2 - timeend1
-        logger.info(time_cost1)
-        logger.info(time_cost2)
 
         logger.info(timecost1)
         logger.info(timecost2)
@@ -940,6 +937,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -982,7 +980,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
