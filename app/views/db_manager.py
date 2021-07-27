@@ -653,8 +653,10 @@ class DBManager(object):
         #             "$set": traj
         #         }
         #     )
+
         bulk = db_traj_data.initialize_ordered_bulk_op()
         for traj in traj_data:
+            logger.info(traj)
             bulk.find(
                 {
                     "bagid": bagid,
@@ -665,6 +667,7 @@ class DBManager(object):
                 "$set": traj
             })
         bulk.execute()
+        logger.info("insert done")
 
     def upload_trajectoryinfo_by_id(self, data, bagid):
         print("uploading....")
