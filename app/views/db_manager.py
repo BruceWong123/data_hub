@@ -671,9 +671,9 @@ class DBManager(object):
             })
         timeend1 = time.time()
 
-        logger(time_start)
+        logger.info(time_start)
         bulk.execute()
-        logger(time_start)
+        logger.info(time_start)
         timeend2 = time.time()
         logger.info("insert done")
         timecost1 = timeend1 - timestart
