@@ -143,7 +143,7 @@ class Test_UPload:
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/upload/"
 
-        data = "{\"trajectory\": [{\"object_id\": \"262333\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]}"
+        data = "{\"trajectory\": [{\"perception_object_id\": \"262333\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]}"
 
         data_dict = {}
         data_dict["data"] = data

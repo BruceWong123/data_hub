@@ -662,7 +662,7 @@ class DBManager(object):
                 {
                     "bagid": bagid,
                     "timestamp": traj["timestamp"],
-                    "perception_object_id": traj["obj_id"]
+                    "perception_object_id": traj["perception_object_id"]
                 }
             ).upsert().update({
                 "$set": traj
