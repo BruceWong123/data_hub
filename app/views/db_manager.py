@@ -656,16 +656,17 @@ class DBManager(object):
 
         bulk = db_traj_data.initialize_ordered_bulk_op()
         for traj in traj_data:
-            logger.info(traj)
+
             traj["bagid"] = bagid
             traj["perception_object_id"] = obj_id
+            logger.info(traj)
             bulk.find(
                 {
                     "bagid": bagid,
                     "timestamp": traj["timestamp"],
                     "perception_object_id": obj_id
                 }
-            ).update({
+            ).upsert().update({
                 "$set": traj
             })
         bulk.execute()
