@@ -636,6 +636,7 @@ class DBManager(object):
 
     def upload_trajectoryinfo_by_dict(self, data, bagid):
         print("uploading....")
+        time_start = time.clock()
         logger.info("into upload trajectory by dict")
         result = {}
         db_traj_data = self.mongo_db["trajectories"]
@@ -668,7 +669,11 @@ class DBManager(object):
                 "$set": traj
             })
         bulk.execute()
+
+        time_end = time.clock()
         logger.info("insert done")
+        time_cost = time_end - time_start
+        logger.info(time_cost)
 
     def upload_trajectoryinfo_by_id(self, data, bagid):
         print("uploading....")
