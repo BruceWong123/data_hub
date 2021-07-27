@@ -656,10 +656,8 @@ class DBManager(object):
         logger.info(bagid)
         bulk = db_traj_data.initialize_ordered_bulk_op()
         for traj in traj_data:
-
             traj["bagid"] = bagid
             traj["perception_object_id"] = obj_id
-            logger.info(traj)
             bulk.find(
                 {
                     "bagid": bagid,
@@ -927,6 +925,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -969,7 +968,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
