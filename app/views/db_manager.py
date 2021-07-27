@@ -643,24 +643,28 @@ class DBManager(object):
         data = json.loads(data)
         obj_id = data["object_id"]
         traj_data = data["trajectory"]
+        # for traj in traj_data:
+        #     db_traj_data.update(
+        #         {
+        #             "bagid": bagid,
+        #             "timestamp": traj["timestamp"],
+        #             "perception_object_id": obj_id
+        #         }, {
+        #             "$set": traj
+        #         }
+        #     )
+        bulk = db_traj_data.initialize_ordered_bulk_op()
         for traj in traj_data:
-            logger.info(traj)
-            timestamp = traj["timestamp"]
-            query_result = db_traj_data.find_one(
-                {"bagid": bagid, "timestamp": timestamp, "perception_object_id": obj_id})
-
-            if query_result is None:
-                traj["bagid"] = bagid
-                traj['perception_object_id'] = obj_id
-                db_traj_data.insert_one(traj)
-            else:
-                db_traj_data.update(
-                    {
-                        "_id": query_result.get('_id')
-                    }, {
-                        "$set": traj
-                    }
-                )
+            bulk.find(
+                {
+                    "bagid": bagid,
+                    "timestamp": traj["timestamp"],
+                    "perception_object_id": obj_id
+                }
+            ).update({
+                "$set": traj
+            })
+        bulk.execute()
 
     def upload_trajectoryinfo_by_id(self, data, bagid):
         print("uploading....")
@@ -917,7 +921,6 @@ class DBManager(object):
 
 # task related
 
-
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -960,6 +963,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
