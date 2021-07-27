@@ -1,13 +1,13 @@
-from uploading_test import Uploading_test
-from downloading_test import Downloading_test
+from test_trajectory_upload import Test_trajectory_upload
+from test_trajectory_download import Test_trajectory_download
+from test_labeling_upload import Test_labeling_upload
+from test_labeling_download import Test_labeling_download
 
 
 if __name__ == '__main__':
-    test = Uploading_test()
+    test = Test_trajectory_upload()
     # test.upload_attributes()
-    test.upload_trajectory_by_dict()
-    # test.download_labeling_data()
+    test.test_upload_trajectory_by_dict()
+    # test.test_download_labeling_data()
     # test.test_mongo()
     print("try to get")
-    # body = requests.get("http://www.baidu.com")
-    # print(body)
