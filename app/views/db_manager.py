@@ -668,12 +668,15 @@ class DBManager(object):
             ).upsert().update({
                 "$set": traj
             })
+        time_end1 = time.clock()
         bulk.execute()
 
-        time_end = time.clock()
+        time_end2 = time.clock()
         logger.info("insert done")
-        time_cost = time_end - time_start
-        logger.info(time_cost)
+        time_cost1 = time_end1 - time_start
+        time_cost2 = time_end2 - time_end1
+        logger.info(time_cost1)
+        logger.info(time_cost2)
 
     def upload_trajectoryinfo_by_id(self, data, bagid):
         print("uploading....")
