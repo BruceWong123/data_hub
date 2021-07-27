@@ -643,7 +643,6 @@ class DBManager(object):
         db_traj_data = self.mongo_db["trajectories"]
 
         data = json.loads(data)
-        obj_id = data["object_id"]
         traj_data = data["trajectory"]
         # for traj in traj_data:
         #     db_traj_data.update(
@@ -659,21 +658,20 @@ class DBManager(object):
         bulk = db_traj_data.initialize_ordered_bulk_op()
         for traj in traj_data:
             traj["bagid"] = bagid
-            traj["perception_object_id"] = obj_id
             bulk.find(
                 {
                     "bagid": bagid,
                     "timestamp": traj["timestamp"],
-                    "perception_object_id": obj_id
+                    "perception_object_id": traj["obj_id"]
                 }
             ).upsert().update({
                 "$set": traj
             })
+
         timeend1 = time.time()
 
-        logger.info(time_start)
         bulk.execute()
-        logger.info(time_start)
+
         timeend2 = time.time()
         logger.info("insert done")
         timecost1 = timeend1 - timestart
