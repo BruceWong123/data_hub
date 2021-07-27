@@ -653,7 +653,7 @@ class DBManager(object):
         #             "$set": traj
         #         }
         #     )
-
+        logger.info(bagid)
         bulk = db_traj_data.initialize_ordered_bulk_op()
         for traj in traj_data:
 
