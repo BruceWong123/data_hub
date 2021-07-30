@@ -108,9 +108,10 @@ class Test_UPload:
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
 
-        data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_40\", \"timestamp\": \"1580604436850000\", \"object_id\": \"32663\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}"
+        data = "[{\"timestamp\": \"1580604436850000\", \"attribute\":[ {\"object_id\": \"32663\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}, {\"object_id\": \"32661\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}]},{\"timestamp\": \"1580604436860000\", \"attribute\":[ {\"object_id\": \"32663\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}, {\"object_id\": \"32661\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}]}]"
         data_dict = {}
         data_dict["data"] = data
+        data_dict["bagId"] = "YR_MKZ_1_20201207_022851_755_40_test"
         session = requests.session()
         session.keep_alive = False
         print(data_dict)

@@ -194,7 +194,7 @@ def uploadTrajectoryAttri(request):
     if request.method == 'PUT' and request is not None:
         request_body = request.data
         request_dict = request_body.dict()
-        return JsonResponse(db.upload_attri_by_id(request_dict.get("data")), safe=False)
+        return JsonResponse(db.upload_attri_by_id(request_dict.get("data"), request_dict.get("bagId")), safe=False)
 
 
 # labeling related

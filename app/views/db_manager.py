@@ -639,7 +639,7 @@ class DBManager(object):
         time_start = time.clock()
         timestart = time.time()
         logger.info("into upload trajectory by dict")
-        result = {}
+         
         db_traj_data = self.mongo_db["trajectories"]
 
         data = json.loads(data)
@@ -744,25 +744,29 @@ class DBManager(object):
         # print("upload done")
         return result
 
-    def upload_attri_by_id(self, data):
-        print("upload labeling 111....")
-        result = {}
-        db_attri_data = self.mongo_db["features"]
-        logger.info(data)
-        data = json.loads(data)
-        logger.info(data["timestamp"])
-        logger.info(data["bag_name"])
-        logger.info(data["object_id"])
-        db_attri_data.update(
-            {
-                "timestamp": data["timestamp"],
-                "bag_name": data["bag_name"],
-                "object_id": data["object_id"]
-            }, {
-                "$set": data
-            }, True
-        )
-        print("done insert")
+    def upload_attri_by_id(self, data, bag_name):
+        print("upload attribute 111....") 
+        db_attri_data = self.mongo_db["features"] 
+        data = json.loads(data) 
+        
+        bulk = db_attri_data.initialize_ordered_bulk_op()
+        for attri_per_time in data:
+            attri_data = attri_per_time["attribute"]
+            for attri in attri_data: 
+                attri["bag_name"] = bag_name
+                attri["timestamp"] = attri_per_time["timestamp"]
+                bulk.find(
+                    {
+                        "bag_name": bag_name,
+                        "timestamp": attri_per_time["timestamp"],
+                        "object_id": attri["object_id"]
+                    }
+                ).upsert().update({
+                    "$set": attri
+                })
+ 
+        bulk.execute()
+        print("done upload")
         return "done"
 
 # labeling related
