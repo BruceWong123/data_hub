@@ -639,7 +639,7 @@ class DBManager(object):
         time_start = time.clock()
         timestart = time.time()
         logger.info("into upload trajectory by dict")
-         
+
         db_traj_data = self.mongo_db["trajectories"]
 
         data = json.loads(data)
@@ -745,14 +745,14 @@ class DBManager(object):
         return result
 
     def upload_attri_by_id(self, data, bag_name):
-        print("upload attribute 111....") 
-        db_attri_data = self.mongo_db["features"] 
-        data = json.loads(data) 
-        
+        print("upload attribute 111....")
+        db_attri_data = self.mongo_db["features"]
+        data = json.loads(data)
+        logger.info("upload attribute")
         bulk = db_attri_data.initialize_ordered_bulk_op()
         for attri_per_time in data:
             attri_data = attri_per_time["attribute"]
-            for attri in attri_data: 
+            for attri in attri_data:
                 attri["bag_name"] = bag_name
                 attri["timestamp"] = attri_per_time["timestamp"]
                 bulk.find(
@@ -764,8 +764,10 @@ class DBManager(object):
                 ).upsert().update({
                     "$set": attri
                 })
- 
+
         bulk.execute()
+
+        logger.info("upload attribute done")
         print("done upload")
         return "done"
 
@@ -939,7 +941,6 @@ class DBManager(object):
 
 # task related
 
-
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -982,6 +983,7 @@ class DBManager(object):
 
 
 # result related
+
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]

@@ -191,7 +191,7 @@ class Test_UPload:
 if __name__ == '__main__':
     test = Test_UPload()
     # test.upload_attributes()
-    test.upload_trajectory_by_dict()
+    test.upload_attributes()
     # test.download_labeling_data()
     # test.test_mongo()
     print("try to get")
