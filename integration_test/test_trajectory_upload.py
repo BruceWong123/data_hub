@@ -9,7 +9,7 @@ from pymongo import MongoClient
 import sys
 
 import os
-
+import pickle
 currentUrl = os.path.dirname(__file__)
 parentUrl = os.path.abspath(os.path.join(currentUrl, os.pardir))
 sys.path.append(parentUrl)
@@ -18,7 +18,7 @@ sys.path.append(parentUrl)
 class Test_trajectory_upload:
     def __init__(self):
         print("init")
-        pass    
+        pass
 
     def test_upload_attributes(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
@@ -56,12 +56,37 @@ class Test_trajectory_upload:
         print("download done")
 
     def test_upload_trajectory_by_dict(self):
-        # service_end_point = "http://127.0.0.1:8000/api/"
+        print("into upload by dict")
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/upload/"
 
-        data = "{\"trajectory\": [{\"perception_object_id\": \"262333\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}, {\"perception_object_id\": \"262433\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"},{\"perception_object_id\": \"262633\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]}"
+        data = "{\"trajectory\": [{\"perception_object_id\": \"262333\", \"timestamp\": \"2323232\", \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}, {\"perception_object_id\": \"262433\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"},{\"perception_object_id\": \"262633\", \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]}"
 
+        data_dict = {}
+        data_dict["data"] = data
+        data_dict["bagId"] = "test_test_test_test_test"
+        session = requests.session()
+        session.keep_alive = False
+        session.put(url=upload_url, data=data_dict)
+        print("upload done")
+
+    def load_trajectory_from_file(self):
+        trajectories = []
+        with (open("test_file.pkl", "rb")) as openfile:
+            while True:
+                try:
+                    trajectories.append(pickle.load(openfile))
+                except EOFError:
+                    break
+        return trajectories
+
+    def test_upload_trajectory_by_file(self):
+
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "trajectory/upload/"
+
+        data = dict()
+        data["trajectory"] = self.load_trajectory_from_file()
         data_dict = {}
         data_dict["data"] = data
         data_dict["bagId"] = "test_test_test_test_test"

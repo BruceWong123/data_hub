@@ -173,6 +173,7 @@ def uploadTrajectoryInfoByDict(request):
     print("before into %s" % request.method)
     if request.method == 'PUT' and request is not None:
         print("into put")
+        logger.info("in trajectory by dict")
         request_body = request.data
         request_dict = request_body.dict()
         return JsonResponse(db.upload_trajectoryinfo_by_dict(request_dict.get("data"), request_dict.get("bagId")), safe=False)

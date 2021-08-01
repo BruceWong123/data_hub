@@ -10,4 +10,4 @@ if __name__ == '__main__':
     test.test_upload_trajectory_by_dict()
     # test.test_download_labeling_data()
     # test.test_mongo()
-    print("try to get")
+    print("done test")
