@@ -631,8 +631,9 @@ class DBManager(object):
         timestamp = -1
         objectid = -1
         bagid = " "
+        logger.info(len(query_result))
         if query_result is not None:
-            logger.info("found one")
+            logger.info("found one ")
             for x in query_result:
                 logger.info(x)
                 timestamp = int(x["timestamp"])
@@ -993,6 +994,7 @@ class DBManager(object):
 
 # task related
 
+
     def get_taskinfo_by_id(self, taskid):
         db_task_data = self.mongo_db["tasks"]
         query_result = db_task_data.find_one({"taskid": taskid})
@@ -1035,7 +1037,6 @@ class DBManager(object):
 
 
 # result related
-
 
     def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
         db_task_results = self.mongo_db["task_results"]
