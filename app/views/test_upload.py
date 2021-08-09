@@ -122,6 +122,7 @@ class Test_UPload:
 
         data_dict = dict()
         data_dict["is_still"] = "true"
+        data_dict["on_lane"] = "true"
         session = requests.session()
         session.keep_alive = False
         result = session.put(url=upload_url, data=data_dict)

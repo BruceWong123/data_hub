@@ -630,13 +630,15 @@ class DBManager(object):
         query_result = db_attribute_data.find(condition).limit(1)
         timestamp = -1
         objectid = -1
-        bagid = "xxx"
+        bagid = " "
         if query_result is not None:
             for x in query_result:
                 logger.info(x)
                 timestamp = int(x["timestamp"])
                 objectid = int(x["object_id"])
                 bagid = x["bag_name"]
+        else:
+            return "not found"
         db_traj_data = self.mongo_db["trajectories"]
 
         seqlen = int(seqlen)
