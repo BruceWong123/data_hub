@@ -627,7 +627,7 @@ class DBManager(object):
 
         query_condition = str(condition)
 
-        query_result = db_attribute_data.find(query_condition).limit(1)
+        query_result = db_attribute_data.find(condition).limit(1)
         timestamp = -1
         objectid = -1
         bagid = "xxx"
