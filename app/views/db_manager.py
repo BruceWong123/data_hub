@@ -621,7 +621,7 @@ class DBManager(object):
         return str(result)
 
     def get_trajectory_data_by_multi_attribute(self, condition, seqlen):
-        logger.info(attribute)
+        logger.info(condition)
         logger.info(seqlen)
         db_attribute_data = self.mongo_db["features"]
 

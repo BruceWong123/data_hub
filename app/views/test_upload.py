@@ -115,6 +115,18 @@ class Test_UPload:
         result = session.put(url=upload_url, data=data_dict)
         print(result)
 
+    def download_trajectory_data_multiattributes(self):
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "trajectory/data/multiattributes/download/"
+
+        data_dict = dict()
+        data_dict["is_still"] = "true"
+        session = requests.session()
+        session.keep_alive = False
+        result = session.put(url=upload_url, data=data_dict)
+        print(result)
+
     def upload_attributes(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
@@ -205,7 +217,8 @@ if __name__ == '__main__':
     test = Test_UPload()
     # test.upload_attributes()
     # test.upload_attributes()
-    test.download_trajectory_data()
+    # test.download_trajectory_data()
+    test.download_trajectory_data_multiattributes()
     # test.upload_trajectory_by_dict()
     # test.download_labeling_data()
     # test.test_mongo()
