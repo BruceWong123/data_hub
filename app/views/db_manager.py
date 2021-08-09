@@ -632,12 +632,14 @@ class DBManager(object):
         objectid = -1
         bagid = " "
         if query_result is not None:
+            logger.info("found one")
             for x in query_result:
                 logger.info(x)
                 timestamp = int(x["timestamp"])
                 objectid = int(x["object_id"])
                 bagid = x["bag_name"]
         else:
+            logger.info("not found one")
             return "not found"
         db_traj_data = self.mongo_db["trajectories"]
 

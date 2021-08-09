@@ -126,7 +126,7 @@ class Test_UPload:
         session = requests.session()
         session.keep_alive = False
         result = session.put(url=upload_url, data=data_dict)
-        print(result)
+        print(result.text)
 
     def upload_attributes(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
