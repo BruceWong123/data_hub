@@ -14,15 +14,16 @@ class Test_trajectory_download:
         print("init")
         pass
 
-    def download_trajectory_data(self):
+    def test_download_trajectory_data(self, attribute, seqlen):
         # service_end_point = "http://127.0.0.1:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
-        upload_url = service_end_point + "trajectory/data/is_still/50/"
+        upload_url = service_end_point + "trajectory/data/" + \
+            attribute + "/" + str(seqlen) + "/"
 
         session = requests.session()
         session.keep_alive = False
         result = session.get(url=upload_url)
-        print(result)
+        return result.text
 
     def test_mongo(self):
         host = '43.130.32.126'

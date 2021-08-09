@@ -126,6 +126,10 @@ urlpatterns = [
         views.api.getObjectsByFeature),
 
 
+    # download single frame trajectory by attribute
+    url(r'^api/trajectory/data/multiattributes/download/',
+        views.api.getTrajectoryDataByMultiAttribute),
+
     # download single frame trajectory
     url(r'^api/trajectory/data/(?P<bagid>[0-9a-zA-Z_]+)/(?P<timestamp>[0-9]+)/(?P<objectid>[0-9]+)/(?P<seqlen>[0-9]+)/$',
         views.api.getTrajectoryData),

@@ -57,9 +57,9 @@ class DBManager(object):
         password = urllib.parse.quote_plus(
             self.config.get("MongoDB", "password"))
         authSource = "datahub"
-        print("usename %s ", username)
-        print("password %s ", password)
-        print("host %s ", host)
+        print("usename %s " % username)
+        print("password %s " % password)
+        print("host %s " % host)
         # self.my_mongo_client = MongoClient(
         #     "mongodb://%s:%s@%s:%s/%s" % (quote_plus('root'),
         #                                   quote_plus('iRJL3pbj05o0X3Y='), host, port, authSource)
@@ -580,6 +580,54 @@ class DBManager(object):
         logger.info(seqlen)
         db_attribute_data = self.mongo_db["features"]
         query_result = db_attribute_data.find({attribute: "true"}).limit(1)
+        timestamp = -1
+        objectid = -1
+        bagid = "xxx"
+        if query_result is not None:
+            for x in query_result:
+                logger.info(x)
+                timestamp = int(x["timestamp"])
+                objectid = int(x["object_id"])
+                bagid = x["bag_name"]
+        db_traj_data = self.mongo_db["trajectories"]
+
+        seqlen = int(seqlen)
+        projection = dict()
+        projection['_id'] = 0
+        projection['bagid'] = 0
+        projection['perception_object_id'] = 0
+        projection['timestamp'] = 0
+        projection['l'] = 0
+        projection['w'] = 0
+        projection['h'] = 0
+        projection['theta'] = 0
+        projection['v_x'] = 0
+        projection['v_y'] = 0
+        projection['a_x'] = 0
+        projection['a_y'] = 0
+        projection['lane_id'] = 0
+        projection['preception_object_type'] = 0
+        projection['is_still'] = 0
+        result = []
+
+        # for i in range(100):
+        query_result = db_traj_data.find(
+            {"bagid": bagid, "timestamp": {"$gte": timestamp}, "perception_object_id": objectid}, projection).limit(seqlen)
+
+        if query_result is not None:
+            for x in query_result:
+                logger.info(x)
+                result.append(x)
+        return str(result)
+
+    def get_trajectory_data_by_multi_attribute(self, condition, seqlen):
+        logger.info(attribute)
+        logger.info(seqlen)
+        db_attribute_data = self.mongo_db["features"]
+
+        query_condition = str(condition)
+
+        query_result = db_attribute_data.find(query_condition).limit(1)
         timestamp = -1
         objectid = -1
         bagid = "xxx"
