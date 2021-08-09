@@ -631,7 +631,7 @@ class DBManager(object):
         timestamp = -1
         objectid = -1
         bagid = " "
-        logger.info(len(query_result))
+        logger.info(query_result.count)
         if query_result is not None:
             logger.info("found one ")
             for x in query_result:
