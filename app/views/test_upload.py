@@ -181,6 +181,53 @@ class Test_UPload:
         print(result)
         print("upload done")
 
+    def upload_object_info(self):
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "object_info/upload/"
+
+        data = "{\"bagId\": \" test_test_frame_info\",\"perception_object_id\": \"1111\",\"trajectory\": [{ \"timestamp\": \"2323232\",  \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}, {\"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"},{ \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]}"
+
+        data_dict = {}
+        data_dict["data"] = data
+        session = requests.session()
+        session.keep_alive = False
+        # print(data)
+        result = session.put(url=upload_url, data=data_dict)
+        print(result)
+        print("upload done")
+
+    def upload_object_info_inbatch(self):
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "object_info/upload/"
+
+        data = "{\"trajectory\":[{\"bagId\": \" test_test_frame_info\",\"perception_object_id\": \"2222\",\"trajectory\": [{ \"timestamp\": \"2323232\",  \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}, {\"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"},{ \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]},{\"bagId\": \" test_test_frame_info\",\"perception_object_id\": \"33333\",\"trajectory\": [{ \"timestamp\": \"2323232\",  \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}, {\"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"},{ \"timestamp\": \"2323232\",      \"perception_obj_type\": \"xxx\",\"x\": \"1111\",\"y\": \"2222\",\"z\": \"3333\",\"l\": \"333\",   \"w\": \"333\",\"h\": \"45\",\"theta\": \"1111\",\"v_x\": \"2222\",\"v_y\": \"3333\",\"a_x\": \"333\",\"a_y\": \"333\",\"is_still\": \"false\",\"lane_s\": \"1111\",\"lane_l\": \"2222\",      \"dist_to_left_boundary\": \"3333\",\"dist_to_right_boundary\": \"3333\",\"lane_sequences\": \"3333\"}]}]}"
+
+        data_dict = {}
+        data_dict["data"] = data
+        session = requests.session()
+        session.keep_alive = False
+        # print(data)
+        result = session.put(url=upload_url, data=data_dict)
+        print(result)
+        print("upload done")
+
+    def upload_bag_info(self):
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "bag_info/upload/"
+
+        data = "{\"bagId\": \" test_test_bag_info\",\"perception_object_ids\": \"{111, 222, 333, 444}\"}"
+        data_dict = {}
+        data_dict["data"] = data
+        session = requests.session()
+        session.keep_alive = False
+        # print(data)
+        result = session.put(url=upload_url, data=data_dict)
+        print(result)
+        print("upload done")
+
     def upload_by_file(self):
         file_path = '/home/bruce/datahub/bag_'
 
@@ -213,13 +260,21 @@ class Test_UPload:
         for x in query_result:
             print(x)
 
+    def test_consistency_check(self):
+        service_end_point = "http://127.0.0.1:8000/api/consistency_test/YR_MKZ_1_20201207_022851_755_40/"
+        session = requests.session()
+        session.keep_alive = False
+        print("sent out session")
+        result = session.put(url=service_end_point)
+        print("sent done")
+
 
 if __name__ == '__main__':
     test = Test_UPload()
     # test.upload_attributes()
     # test.upload_attributes()
     # test.download_trajectory_data()
-    test.download_trajectory_data_multiattributes()
+    test.upload_object_info_inbatch()
     # test.upload_trajectory_by_dict()
     # test.download_labeling_data()
     # test.test_mongo()

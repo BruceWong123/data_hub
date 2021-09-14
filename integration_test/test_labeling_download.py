@@ -4,18 +4,15 @@ import os
 import json
 from pymongo import MongoClient
 
-from celery import Celery
 import requests
 import base64
 
 
 class Test_labeling_download:
     def __init__(self):
-        print("init")
         pass
 
-    def download_labeling_data(self):
-        # service_end_point = "http://127.0.0.1:8000/api/"
+    def test_downloading_labeling_data(selt):
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/download/"
 
@@ -30,4 +27,4 @@ class Test_labeling_download:
         session = requests.session()
         session.keep_alive = False
         result = session.put(url=upload_url, data=data_dict)
-        print(result)
+        return result.text

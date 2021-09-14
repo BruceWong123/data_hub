@@ -60,15 +60,19 @@ class DBManager(object):
         print("usename %s " % username)
         print("password %s " % password)
         print("host %s " % host)
-        # self.my_mongo_client = MongoClient(
-        #     "mongodb://%s:%s@%s:%s/%s" % (quote_plus('root'),
-        #                                   quote_plus('iRJL3pbj05o0X3Y='), host, port, authSource)
-        # )
-
-        # self.mongo_db = self.my_mongo_client[database]
-
         self.my_mongo_client = MongoClient(
-            'mongodb://root:iRJL3pbj05o0X3Y=@10.3.3.45:27017/datahub?authSource=admin')
+            "mongodb://%s:%s@%s:%s/%s" % (username,
+                                          password, host, port, authSource)
+        )
+
+        # # self.mongo_db = self.my_mongo_client[database]
+
+        # # self.my_mongo_client = MongoClient(
+        # #     'mongodb://root:iRJL3pbj05o0X3Y=@10.3.3.45:27017/datahub?authSource=admin')
+
+        # self.my_mongo_client = MongoClient(
+        #     'mongodb://root:iRJL3pbj05o0X3Y=@10.10.12.40:27017/datahub?authSource=admin')
+
         self.mongo_db = self.my_mongo_client['datahub']
 
         print(
@@ -137,33 +141,6 @@ class DBManager(object):
             result.append(bag_id)
         return str(result)
 
-    def get_all_timestamps_by_id(self, bagid):
-        bag_association = bagid + "_association"
-        # redis_result = self.redis_cli.get(bag_association)
-        # if redis_result is not None:
-        #     logger.info("found in redis")
-        #     return redis_result
-        logger.info("try to get lock for association")
-        self.lock.acquire()
-        logger.info("got into association lock")
-        result = ""
-        self.connect_to_mysql()
-        sql = "SELECT association FROM app_association WHERE bagid = %s"
-        adr = (bagid, )
-        self.mysql_cursor.execute(sql, adr)
-        query_result = self.mysql_cursor.fetchall()
-        for row in query_result:
-            result += " "
-            result += str(row[0])
-        logger.info("done mysql ")
-        self.close_mysql()
-        self.lock.release()
-        # if len(query_result) > 0:
-        #     self.redis_cli.set(bag_association, result)
-        logger.info("release lock")
-
-        return result
-
     def get_all_bag_id(self):
         # all_bag_id = "all_bag_id"
         # redis_result = self.redis_cli.get(all_bag_id)
@@ -198,137 +175,9 @@ class DBManager(object):
         # self.redis_cli.set(all_bag_id, result)
         return result
 
-    def check_if_bag_exists(self, bagid):
-
-        print("check bag {}".format(bagid))
-        self.lock.acquire()
-        self.connect_to_mysql()
-        sql = "SELECT bagid FROM app_bag WHERE bagid = %s"
-        adr = (bagid, )
-        self.mysql_cursor.execute(sql, adr)
-        mysql_query_result = self.mysql_cursor.fetchall()
-        self.close_mysql()
-        self.lock.release()
-        # db_messages = self.mongo_db["messages"]
-        # mongo_query_result = db_messages.find({"bagid": bagid, })
-
-        for row in mysql_query_result:
-            print(str(row[0]))
-
-        result_len = len(mysql_query_result)
-        print(" result len : {}".format(result_len))
-
-        if len(mysql_query_result) == 0:
-            return False
-        else:
-            return True
-
-    def remove_all_data_by_id(self, bagid):
-        if self.check_if_bag_exists(bagid):
-            logger.info("into delete")
-            self.lock.acquire()
-            self.connect_to_mysql()
-            sql = "DELETE FROM app_bag WHERE bagid = %s"
-            adr = (bagid, )
-            sql2 = "DELETE FROM app_association WHERE bagid = %s"
-            adr2 = (bagid, )
-            try:
-                self.mysql_cursor.execute('SET FOREIGN_KEY_CHECKS=0;')
-                self.mysql_cursor.execute(sql, adr)
-                self.mysql_cursor.execute(sql2, adr2)
-                self.mysql_db.commit()
-                self.mysql_cursor.execute('SET FOREIGN_KEY_CHECKS=1;')
-            except Exception as e:
-                self.mysql_db.rollback()
-                logger.info("exception")
-                return False
-            finally:
-                self.close_mysql()
-                self.lock.release()
-            db_messages = self.mongo_db["messages"]
-            db_messages.delete_many({"bagid": bagid})
-            logger.info("done")
-            return True
-        else:
-            return False
-
-    def get_frame_by_id_time(self, bagid, timestamp):
-        result = "no data found"
-        db_messages = self.mongo_db["messages"]
-        query_result = db_messages.find({"bagid": bagid, "topic": {
-            "$regex": "^/perception/objects"}}).limit(10)
-        for x in query_result:
-            result = x["message"] + "||||||"
-        return result
-
-    def get_message_by_id_time_topic_version(self, bagid, timestamp, topic, version):
-        logger.info("get message by id time topic..........")
-        result = ""
-        db_messages = self.mongo_db["messages"]
-        topic_field_name = self._assemble_topic_with_version("topic", version)
-        message_field_name = self._assemble_message_with_version(
-            "message", version)
-        topic_to_find = self._translate_topic(topic)
-        logger.info("send out query to mongo ..........")
-        query_result = db_messages.find(
-            {"bagid": bagid, "timestamp": timestamp, topic_field_name: topic_to_find})
-
-        for x in query_result:
-            result = x[message_field_name]
-
-        logger.info("get back from mongo and return..........")
-        return result
-
-    def get_range_message_by_id_topic(self, bagid, topic, start, end):
-        logger.info("get message by id: {} topic : {} start : {} end: {}....".format(
-            bagid, topic, start, end))
-        result = ""
-        topic = self._translate_topic(topic)
-        db_messages = self.mongo_db["messages"]
-        start_time = time.time()
-        query_result = db_messages.find(
-            {"bagid": bagid, "timestamp": {'$lte': end, '$gte': start}, "topic": topic}).sort("timestamp")
-        index = 0
-        for i, x in enumerate(query_result):
-            result += x['timestamp'] + "timestamp_and_message" + x['message']
-            if i != query_result.count() - 1:
-                result += "deep_route"
-            logger.info(
-                "get frame for id : {} at index : {}".format(bagid, index))
-            index += 1
-        end_time = time.time()
-        logger.info("get {} data consumed {:.2} s".format(topic,
-                                                          end_time - start_time))
-        return result
-
-    def upload_message_by_id_time_topic_version(self, topic_message_pair, bagid, timestamp, topic, version):
-        db_bag_data = self.mongo_db["messages"]
-        topic_field_name = self._assemble_topic_with_version(topic, version)
-        message_field_name = self._assemble_message_with_version(
-            "message", version)
-
-        data_dict = {}
-        data_dict[topic_field_name] = list(topic_message_pair.keys())[0]
-        data_dict[message_field_name] = list(topic_message_pair.values())[0]
-
-        query_result = db_bag_data.find_one(
-            {"bagid": bagid, "timestamp": timestamp})
-        if query_result is None:
-            metadata_dict = {
-                "bagid": bagid,
-                "timestamp": timestamp,
-            }
-            db_bag_data.insert_one({**metadata_dict, **data_dict})
-        else:
-            db_bag_data.update(
-                {
-                    "_id": query_result.get('_id')
-                }, {
-                    "$set": data_dict
-                }
-            )
 
 # trajectory related
+
     def get_trajectoryinfo_by_id(self, bagid):
 
         db_task_data = self.mongo_db["tasks"]
@@ -732,6 +581,66 @@ class DBManager(object):
         logger.info(timecost1)
         logger.info(timecost2)
 
+    def upload_objectinfo_by_dict(self, data):
+        print("uploading....")
+        time_start = time.clock()
+        timestart = time.time()
+        logger.info("into upload object info by dict")
+
+        db_traj_data = self.mongo_db["object_info"]
+
+        data = json.loads(data)
+        bulk = db_traj_data.initialize_ordered_bulk_op()
+        traj_data = data["trajectory"]
+        for traj in traj_data:
+            bulk.find(
+                {
+                    "bagId": traj["bagId"],
+                    "perception_object_id": traj["perception_object_id"]
+                }
+            ).upsert().update({
+                "$set": traj
+            })
+
+        timeend1 = time.time()
+        bulk.execute()
+        timeend2 = time.time()
+        logger.info("insert done")
+        timecost1 = timeend1 - timestart
+        timecost2 = timeend2 - timeend1
+
+        logger.info(timecost1)
+        logger.info(timecost2)
+
+    def upload_baginfo_by_dict(self, data):
+        print("uploading....")
+        time_start = time.clock()
+        timestart = time.time()
+        logger.info("into upload bag info by dict")
+
+        db_traj_data = self.mongo_db["bag_info"]
+
+        data = json.loads(data)
+        bulk = db_traj_data.initialize_ordered_bulk_op()
+
+        bulk.find(
+            {
+                "bagId": data["bagId"]
+            }
+        ).upsert().update({
+            "$set": data
+        })
+
+        timeend1 = time.time()
+        bulk.execute()
+        timeend2 = time.time()
+        logger.info("insert done")
+        timecost1 = timeend1 - timestart
+        timecost2 = timeend2 - timeend1
+
+        logger.info(timecost1)
+        logger.info(timecost2)
+
     def upload_trajectoryinfo_by_id(self, data, bagid):
         print("uploading....")
         result = {}
@@ -990,148 +899,11 @@ class DBManager(object):
                 result.append(x)
         return str(result)
 
-
-# task related
-
-    def get_taskinfo_by_id(self, taskid):
-        db_task_data = self.mongo_db["tasks"]
-        query_result = db_task_data.find_one({"taskid": taskid})
-        if query_result is None:
-            return {}
-        else:
-            data_dict = {
-                "taskid": taskid,
-                "play_mode": query_result.get("play_mode"),
-                "scene_id": query_result.get("scene_id"),
-                "subscene_id": query_result.get("subscene_id"),
-                "planning_version": query_result.get("planning_version"),
-                "perception_version": query_result.get("perception_version")
-            }
-            return data_dict
-
-    def upload_task_info(self, taskid, play_mode, scene_id, subscene_id, planning_version, perception_version):
-        db_task_data = self.mongo_db["tasks"]
-        query_result = db_task_data.find_one({"taskid": taskid})
-        metadata_dict = {
-            "taskid": taskid
-        }
-        data_dict = {
-            "play_mode": play_mode,
-            "scene_id": scene_id,
-            "subscene_id": subscene_id,
-            "planning_version": planning_version,
-            "perception_version": perception_version
-        }
-        if query_result is None:
-            db_task_data.insert_one({**metadata_dict, **data_dict})
-        else:
-            db_task_data.update(
-                {
-                    "_id": query_result.get('_id')
-                }, {
-                    "$set": data_dict
-                }
-            )
-
-
-# result related
-
-
-    def upload_task_result_by_id_version_mode(self, data_dict, taskid, grading_version, play_mode):
-        db_task_results = self.mongo_db["task_results"]
-        query_result = db_task_results.find_one(
-            {"taskid": taskid,  "grading_version": grading_version, "play_mode": play_mode})
-
-        if query_result is None:
-            metadata_dict = {
-                "taskid": taskid,
-                "grading_version": grading_version,
-                "play_mode": play_mode
-            }
-            db_task_results.insert_one({**metadata_dict, **data_dict})
-
-        else:
-            db_task_results.update(
-                {
-                    "_id": query_result.get('_id')
-                }, {
-                    "$set": data_dict
-                }
-            )
-
-    def get_task_result_by_id_version_mode(self, taskid, grading_version, play_mode):
-        result = ""
-        db_task_results = self.mongo_db["task_results"]
-        query_result = db_task_results.find_one(
-            {"taskid": taskid,  "grading_version": grading_version, "play_mode": play_mode})
-        if query_result is not None:
-            result = query_result.get('result')
-        return result
-
-    def upload_task_frame_result_by_id_version_time(self, data_dict, taskid, grading_version, timestamp):
-        db_frame_results = self.mongo_db["frame_results"]
-        query_result = db_frame_results.find_one(
-            {"taskid": taskid,  "grading_version": grading_version, "timestamp": timestamp})
-
-        if query_result is None:
-            metadata_dict = {
-                "taskid": taskid,
-                "grading_version": grading_version,
-                "timestamp": timestamp
-            }
-            db_frame_results.insert_one({**metadata_dict, **data_dict})
-        else:
-            db_frame_results.update(
-                {
-                    "_id": query_result.get('_id')
-                }, {
-                    "$set": data_dict
-                }
-            )
-
-    def get_task_frame_result_by_id_version_time(self, taskid, grading_version, timestamp):
-        db_frame_results = self.mongo_db["frame_results"]
-        result = ""
-        query_result = db_frame_results.find_one(
-            {"taskid": taskid,  "grading_version": grading_version, "timestamp": timestamp})
-        if query_result is not None:
-            result = query_result.get('debug_info')
-        return result
-
-    def get_scene_result_aggregation(self, filters, sets, aggregation_methods):
-        scene_result_data = self.mongo_db["frame_results"]
-        pipeline = [{"$match": filters},
-                    {"$project": aggregation_methods}]
-        if len(sets) > 0:
-            pipeline.insert(1, {"$addFields": sets})
-
-        cursor = scene_result_data.aggregate(pipeline)
-        res = list(cursor)
-        scene_aggregation = self.mongo_db["scenes_aggregation_results"]
-        if len(res) > 0:
-            scene_aggregation.delete_many({})
-            for result in copy.deepcopy(res):
-                scene_aggregation.insert_one(result)
-        return res
-
-    def get_grading_result_aggregation(self, filters, aggregation_methods, projects):
-        scene_aggregation_result = self.mongo_db["scenes_aggregation_results"]
-        pipeline = [{"$match": filters},
-                    {"$group": aggregation_methods}]
-        if len(projects) > 0:
-            pipeline.append({"$project": projects})
-
-        cursor = scene_aggregation_result.aggregate(pipeline)
-        res = list(cursor)
-        return res
-
-    def upload_scene_result_one(self, data_dict):
-        db_frame_results = self.mongo_db["frame_results"]
-        scene_data_dict = ast.literal_eval(data_dict["scene_result_one"])
-        over_write = ast.literal_eval(data_dict["over_write"])
-        query_result = db_frame_results.find_one({"play_mode": scene_data_dict["play_mode"],  "grading_config": scene_data_dict["grading_config"], "planning_version": scene_data_dict[
-            "planning_version"], "prediction_version": scene_data_dict["prediction_version"], "scene_id": scene_data_dict["scene_id"], "car_id": scene_data_dict["car_id"]})
-        if query_result is not None and over_write:
-            db_frame_results.delete_one(query_result)
-        if query_result is None or over_write:
-            db_frame_results.insert_one(scene_data_dict)
+    def consistency_check(self, bagid):
+        print(bagid)
+        db_traj_data = self.mongo_db["trajectories"]
+        myCursor = db_traj_data.distinct({"timestamp"})
+        count = 0
+        for record in myCursor:
+            count += 1
+        return str(count)

@@ -1,5 +1,4 @@
 import base64
-from celery import Celery
 
 import requests
 from pathlib import Path
@@ -17,11 +16,11 @@ sys.path.append(parentUrl)
 
 class Test_labeling_upload:
     def __init__(self):
-        print("init")
         pass
 
     def test_upload_labeling(self):
-        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://127.0.0.1:8000/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/time/upload/"
 
         data = "{\"8\": {\"timestamp\": {\"objects\": 1584360195850000, \"camera6\": 1584360195883748838, \"camera2\": 1584360195916826862, \"camera1\": 1584360195900073653}, \"rostime\": {\"objects\": \"1584360196018079\", \"camera6\": \"1584360195903940\", \"camera2\": \"1584360195939053\", \"camera1\": \"1584360195922630\"}}, \"9\": {\"timestamp\": {\"objects\": 1584360195950000, \"camera6\": 1584360195983747510, \"camera2\": 1584360196016829070, \"camera1\": 1584360196000116133}, \"rostime\": {\"objects\": \"1584360196117999\", \"camera6\": \"1584360196004368\", \"camera2\": \"1584360196038858\", \"camera1\": \"1584360196023211\"}}}"
@@ -36,9 +35,7 @@ class Test_labeling_upload:
         data_dict["bagid"] = "YR_MKZ_1_20201207_022851_755_40"
         session = requests.session()
         session.keep_alive = False
-        print(data_dict)
         session.put(url=upload_url, data=data_dict)
-        print("upload done")
 
     def test_upload_labeling_data2(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
@@ -52,17 +49,14 @@ class Test_labeling_upload:
         frame_fields = []
         frame_fields.append("object_2d")
         data_dict["frameFields"] = frame_fields
-        print(data_dict)
         session = requests.session()
         session.keep_alive = False
-        print("send request")
         session.put(url=upload_url, data=data_dict)
-        print("done")
 
     def test_upload_labeling_data(self):
-        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://127.0.0.1:8000/api/"
 
-        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "labeling/data/upload/"
         data_dict = {}
         data_dict["data"] = "annotation dfa222fffffasdf"
@@ -72,9 +66,6 @@ class Test_labeling_upload:
         frame_fields = []
         frame_fields.append("object_2d")
         data_dict["frameFields"] = frame_fields
-        print(data_dict)
         session = requests.session()
         session.keep_alive = False
-        print("send request")
         session.put(url=upload_url, data=data_dict)
-        print("done")

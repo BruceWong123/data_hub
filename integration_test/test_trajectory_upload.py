@@ -1,5 +1,4 @@
 import base64
-from celery import Celery
 
 import requests
 from pathlib import Path
@@ -17,7 +16,6 @@ sys.path.append(parentUrl)
 
 class Test_trajectory_upload:
     def __init__(self):
-        print("init")
         pass
 
     def test_upload_attributes(self):
@@ -34,26 +32,30 @@ class Test_trajectory_upload:
         session.put(url=upload_url, data=data_dict)
         print("upload done")
 
-    def test_upload_attributes_by_file(self):
+    def test_upload_attributes_by_file(self, sample_num):
         # service_end_point = "http://127.0.0.1:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/attributes/upload/"
 
         # data = "{\"bag_name\": \"YR_MKZ_1_20201207_022851_755_40\", \"timestamp\": \"1580604436850000\", \"object_id\": \"32663\", \"turn\": \"false\", \"is_still\": \"true\", \"on_lane\": \"false\", \"lane_change\": \"true\", \"on_crosswalk\": \"true\", \"in_junction\": \"false\"}"
 
-        attribute_data = self.load_data_from_file("attribute_test_file.pkl")
+        raw_data = self.load_data_from_file("attribute_test_file.pkl")
 
         # with open('attribute_output.txt', 'w') as f:
         #     print(attribute_data, file=f)
 
+        attribute_data = raw_data["data"]
+        attri_list = json.loads(attribute_data)
+        first_n = attri_list[0:sample_num]
+        attri_json = json.dumps(first_n)
+
         data_dict = {}
-        data_dict["data"] = data
-        data_dict["bagId"] = data
+        data_dict["data"] = attri_json
+        data_dict["bagId"] = raw_data["bagId"]
         session = requests.session()
         session.keep_alive = False
-        print(data_dict)
+
         session.put(url=upload_url, data=data_dict)
-        print("upload done")
 
     def test_upload_trajectory(self, filename):
         # service_end_point = "http://127.0.0.1:8000/api/"
@@ -92,7 +94,6 @@ class Test_trajectory_upload:
         print("upload done")
 
     def load_data_from_file(self, file_name):
-        print("loading data from file: %s " % file_name)
 
         with (open(file_name, "rb")) as openfile:
             while True:
@@ -107,30 +108,37 @@ class Test_trajectory_upload:
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "trajectory/upload/"
 
-        pkl_data = self.load_data_from_file(
+        raw_data = self.load_data_from_file(
             "trajectory_test_file.pkl")
 
-        with open('traj_output.txt', 'w') as f:
-            print(pkl_data, file=f)
+        # with open('traj_output.txt', 'w') as f:
+        #     print(pkl_data, file=f)
 
-        trajectory_data = pkl_data["data"]
+        trajectory_data = raw_data["data"]
 
-        traj_json = json.loads(trajectory_data)
-        traj_list = traj_json["trajectory"]
-        upload_list = traj_list[0:traj_num]
+        # traj_json = json.loads(trajectory_data)
+        # traj_list = traj_json["trajectory"]
+        # upload_list = traj_list[0:traj_num]
 
-        print(type(upload_list))
-        print(upload_list)
+        bagId = raw_data["bagId"]
+        trajectory_data = raw_data["data"]
+        traj_data = json.loads(trajectory_data)
 
+        traj_list = traj_data["trajectory"]
+        first_n = traj_list[0:traj_num]
+        traj_json = json.dumps(first_n)
+
+        # print(traj_json)
+        traj_dict = "{\"trajectory\":" + traj_json + "}"
+
+        # print(traj_dict)
         data_dict = {}
-        data_dict["data"] = trajectory_data
-        data_dict["bagId"] = pkl_data["bagId"]
+        data_dict["data"] = traj_dict
+        data_dict["bagId"] = bagId
         session = requests.session()
         session.keep_alive = False
         # print(data)
-        print("uploading trajectory to database")
-        # session.put(url=upload_url, data=data_dict)
-        print("upload done")
+        session.put(url=upload_url, data=data_dict)
 
     def upload_by_file(self):
         file_path = '/home/bruce/datahub/bag_'
