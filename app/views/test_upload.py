@@ -6,7 +6,7 @@ from pymongo import MongoClient
 
 import labeling.perception_labeling_rosbag_parser_pb2 as perception_labeling
 
-from celery import Celery
+# from celery import Celery
 import requests
 import base64
 
@@ -198,7 +198,7 @@ class Test_UPload:
         print("upload done")
 
     def upload_object_info_inbatch(self):
-        # service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://10.3.1.30:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "object_info/upload/"
 
@@ -215,6 +215,7 @@ class Test_UPload:
 
     def upload_bag_info(self):
         # service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://10.3.1.30:8000/api/"
         service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
         upload_url = service_end_point + "bag_info/upload/"
 
@@ -223,7 +224,8 @@ class Test_UPload:
         data_dict["data"] = data
         session = requests.session()
         session.keep_alive = False
-        # print(data)
+        print(data)
+        print("send out request")
         result = session.put(url=upload_url, data=data_dict)
         print(result)
         print("upload done")
@@ -242,12 +244,12 @@ class Test_UPload:
         # upload_trajectory(filename)
 
     def test_mongo(self):
-        host = '43.130.32.126'
-        port = 27017
+        host = '43.130.65.243'
+        port = 37017
         authSource = "tw"
         print("connecting db")
         self.my_mongo_client = MongoClient(
-            "mongodb://%s:%s@%s:%s/%s" % ('bruce',
+            "mongodb://%s:%s@%s:%s/%s" % ('sky',
                                           'twitter', host, port, 'tw')
         )
         self.mongo_db = self.my_mongo_client["tw"]
@@ -268,13 +270,48 @@ class Test_UPload:
         result = session.put(url=service_end_point)
         print("sent done")
 
+    def upload_labeling_pose(self):
+        print("into uploading pose")
+        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        upload_url = service_end_point + "labeling/pose/upload/"
+
+        data_dict = dict()
+        labeling_pose = list()
+        for i in range(10):
+            labeling_pose.append(i)
+        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2"
+        data_dict["pose"] = str(labeling_pose)
+        print(data_dict)
+        session = requests.session()
+        session.keep_alive = False
+        result = session.put(url=upload_url, data=data_dict)
+        print(result)
+
+    def download_labeling_pose(self):
+        print("into downloading pose")
+        bagid = "YR_MKZ_1_20210105_biandao_PM2"
+        service_end_point = "http://127.0.0.1:8000/api/"
+        # service_end_point = "http://dataserver.prediction.simulation.deeproute.ai/api/"
+        download_url = service_end_point + "labeling/pose/download/"
+
+        data_dict = dict()
+        data_dict["bagId"] = "YR_MKZ_1_20210105_biandao_PM2"
+
+        print("send out request")
+        session = requests.session()
+        session.keep_alive = False
+        result = session.put(url=download_url, data=data_dict)
+        print(result.text)
+
 
 if __name__ == '__main__':
     test = Test_UPload()
     # test.upload_attributes()
     # test.upload_attributes()
     # test.download_trajectory_data()
-    test.upload_object_info_inbatch()
+    # test.upload_object_info_inbatch()
+    test.download_labeling_pose()
     # test.upload_trajectory_by_dict()
     # test.download_labeling_data()
     # test.test_mongo()
